@@ -22,14 +22,15 @@ try:
 except NameError:
     from sets import Set as set
 from core import NAME, VERSION
-from core.config.configobj import ConfigObj
+from core.configobj import ConfigObj
 
 
 class ConfigError(Exception):
     """Base class for errors occuring while reading the configuration file."""
     pass
 
-class MissingConfigOpt(ConfigError):
+
+class MissingConfigOption(ConfigError):
     """
     An option is missing in the configuration file.
     constructor:
@@ -40,6 +41,7 @@ class MissingConfigOpt(ConfigError):
         self.value = '%s: missing option in config file: %s' % (server, option)
     def __str__(self):
         return repr(self.value)
+
 
 class ConfigTypeError(ConfigError):
     """
@@ -96,7 +98,7 @@ class Config(object):
         for opt, rule in self.rules.items():
             if rule['mandatory']:
                 if not hasattr(self, opt):
-                    raise MissingConfigOpt(self.server, opt)
+                    raise MissingConfigOption(self.server, opt)
             else:
                 if not hasattr(self, opt):
                     setattr(self, opt, rule['default'])
@@ -104,7 +106,7 @@ class Config(object):
                 raise ConfigTypeError(self.server, opt, str(type(opt)).split("'")[1], str(rule['type']).split("'")[1])
 
 
-def getConfigs(config_file):
+def readConfig(config_file):
     """read a config file and create a Config object for each section.
     @param config_file (str): path to the configuration file to read
     @return configs (list): list containing created Config objects"""

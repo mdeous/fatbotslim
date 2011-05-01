@@ -35,7 +35,7 @@ class PluginError(Exception):
 
 class UnsupportedEventError(PluginError):
     def __init__(self, event):
-        self.value = "Can't register trigger: '%s' (supported events: 'privmsg', 'pubmsg', 'noticed')" % event
+        self.value = "Can't register event: '%s' (supported events: 'privmsg', 'pubmsg', 'noticed')" % event
 
     def __str__(self):
         return repr(self.value)
@@ -130,14 +130,15 @@ class Manager(object):
 
 
 class trigger(object):
-    def __init__(self, trigger, callback):
-        self.trigger = trigger
+    def __init__(self, prefix, callback):
+        self.prefix = prefix
         self.callback = callback
 
     def __call__(self, func):
         event = re.sub('^on_', '', func.func_name)
         if event not in ('privmsg', 'pubmsg', 'noticed'):
             raise UnsupportedEventError(event)
+
         @wraps(func)
         def wrapped(obj, *args, **kwargs):
             args = list(args)
@@ -145,9 +146,9 @@ class trigger(object):
             if 'self' in argnames:
                 argnames.remove('self')
             msg = args[argnames.index('message')]
-            if msg.startswith(self.trigger):
+            if msg.startswith(self.prefix):
                 #TODO: use twisted defered system for triggers callbacks
-                args[args.index(msg)] = re.sub('^%s ?' % self.trigger, '', msg)
+                args[args.index(msg)] = re.sub('^%s ?' % self.prefix, '', msg)
                 self.callback(obj, *args, **kwargs)
             return func(obj, *args, **kwargs)
         return wrapped

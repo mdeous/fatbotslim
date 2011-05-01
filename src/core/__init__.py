@@ -17,6 +17,11 @@
 #   along with fatbotslim.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from asyncore import loop as mainloop
+from core.asynbot.irc import IRCClient
+from core.asynbot import servercodes
+from core.config import configobj
+
 NAME = 'fatbotslim'
 VERSION = '0.1'
 AUTHOR = 'MatToufoutu'

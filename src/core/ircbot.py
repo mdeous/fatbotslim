@@ -38,12 +38,12 @@ class IrcBot(IRCClient):
         self.pman = Manager(self, pluginsPath, self.factory.config.plugins)
 
     def pingSelf(self):
-        """used to prevent timeouts."""
+        """prevents timeouts on some servers."""
         self.ping(self.nickname)
         self.pingSelfId = reactor.callLater(180, self.pingSelf)
 
     def connectionMade(self):
-        """called when a connection is initiated."""
+        """the connection has been successfully initiated."""
 
         self.nickname = self.factory.config.nickname
         self.password = self.factory.config.srv_pass if self.factory.config.srv_pass else None

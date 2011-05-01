@@ -24,56 +24,49 @@ from twisted.internet import reactor, ssl
 from core.config import readConfig
 from core.ircbot import IrcBotFactory
 
-#class BotLauncher(object):
-#    """
-#    Launch multiple clients in separated processes.
-#    """
-#    def __init__(self):
-#        self.factories = list()
-#        self.processes = list()
-#
-#    def addBot(self, cfg):
-#        """add a client to the list of bots to start.
-#        @param cfg (object): client's configuration"""
-#        factory = IrcBotFactory(cfg)
-#        self.factories.append(factory)
-#
-#    def startBot(self, factory):
-#        """start a client.
-#        @param factory (object): factory to use to create the client"""
-#        if factory.config.ssl:
-#            try:
-#                import OpenSSL
-#                reactor.connectSSL(factory.config.host, factory.config.port, factory, ssl.ClientContextFactory())
-#            except ImportError:
-#                print("[%s] Can not connect using SSL, pyopenssl not found")
-#                return
-#        else:
-#            reactor.connectTCP(factory.config.host, factory.config.port, factory)
-#        reactor.run()
-#
-#    def startAll(self):
-#        """start all registered clients."""
-#        for factory in self.factories:
-#            p = Process(target=self.startBot, args=(factory,))
-#            p.start()
-#            self.processes.append(p)
-#
-#
-#def main():
-#    """main function"""
-#    launcher = BotLauncher()
-#    for config in readConfig('fatbotslim.conf'):
-#        launcher.addBot(config)
-#    launcher.startAll()
 
-import logging
-from core import IRCClient, mainloop
+class BotLauncher(object):
+    """
+    Launch multiple clients in separated processes.
+    """
+    def __init__(self):
+        self.factories = list()
+        self.processes = list()
+
+    def addBot(self, cfg):
+        """add a client to the list of bots to start.
+        @param cfg (object): client's configuration"""
+        factory = IrcBotFactory(cfg)
+        self.factories.append(factory)
+
+    def startBot(self, factory):
+        """start a client.
+        @param factory (object): factory to use to create the client"""
+        if factory.config.ssl:
+            try:
+                import OpenSSL
+                reactor.connectSSL(factory.config.host, factory.config.port, factory, ssl.ClientContextFactory())
+            except ImportError:
+                print("[%s] Can not connect using SSL, pyopenssl not found")
+                return
+        else:
+            reactor.connectTCP(factory.config.host, factory.config.port, factory)
+        reactor.run()
+
+    def startAll(self):
+        """start all registered clients."""
+        for factory in self.factories:
+            p = Process(target=self.startBot, args=(factory,))
+            p.start()
+            self.processes.append(p)
+
 
 def main():
-    bot1 = IRCClient('irc.plain-text.info', 6667, 'fatbotslim1', 'fbs', ['#kalk-test'], logging.DEBUG)
-    bot2 = IRCClient('irc.plain-text.info', 6667, 'fatbotslim2', 'fbs', ['#kalk-test'], logging.DEBUG)
-    mainloop()
+    """main function"""
+    launcher = BotLauncher()
+    for config in readConfig('fatbotslim.conf'):
+        launcher.addBot(config)
+    launcher.startAll()
 
 
 if __name__ == '__main__':

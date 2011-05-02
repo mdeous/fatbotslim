@@ -42,15 +42,24 @@ class BotLauncher(object):
     def startBot(self, factory):
         """start a client.
         @param factory (object): factory to use to create the client"""
-        if factory.config.ssl:
+        if factory.config.get('ssl', False):
             try:
                 import OpenSSL
-                reactor.connectSSL(factory.config.host, factory.config.port, factory, ssl.ClientContextFactory())
+                reactor.connectSSL(
+                    factory.config.get('host'),
+                    factory.config.get('port', 6697),
+                    factory,
+                    ssl.ClientContextFactory()
+                )
             except ImportError:
                 print("[%s] Can not connect using SSL, pyopenssl not found")
                 return
         else:
-            reactor.connectTCP(factory.config.host, factory.config.port, factory)
+            reactor.connectTCP(
+                factory.config.get('host'),
+                factory.config.get('port', 6667),
+                factory
+            )
         reactor.run()
 
     def startAll(self):

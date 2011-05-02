@@ -29,17 +29,17 @@ class Helper(BasePlugin):
     def showPubHelp(self, user, channel, message):
         print message
         plugins = [p for p in self.client.pman.plugins if (p.pubHelp is not None)]
-        if len(plugins) != 0:
+        if plugins:
             self.client.msg(channel, self.header + '\n'.join(p.pubHelp.strip() for p in plugins))
 
     def showPrivHelp(self, user, destination, message):
         plugins = [p for p in self.client.pman.plugins if (p.privHelp is not None)]
-        if len(plugins) != 0:
+        if plugins:
             self.client.msg(self.netmaskToNick(user), self.header + '\n'.join(p.privHelp.strip() for p in plugins))
 
     def showNoticeHelp(self, user, message):
         plugins = [p for p in self.client.pman.plugins if (p.noticeHelp is not None)]
-        if len(plugins) != 0:
+        if plugins:
             self.client.msg(self.netmaskToNick(user), self.header + '\n'.join(p.noticeHelp.strip() for p in plugins))
 
     @trigger('!help', showPubHelp)

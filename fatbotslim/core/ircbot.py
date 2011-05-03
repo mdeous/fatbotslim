@@ -68,7 +68,7 @@ class IrcBot(IRCClient):
 
     def signedOn(self):
         """called after a successful connection."""
-        print('[%s] Connection successful' % self.factory.config.server)
+        print('[%s] Connection successful' % self.factory.config.server_name)
         self.pingSelfId = reactor.callLater(180, self.pingSelf)
         for chan in self.factory.config.channels:
             self.join(chan)
@@ -137,8 +137,8 @@ class IrcBotFactory(ReconnectingClientFactory):
         self.config = cfg
 
     def clientConnectionLost(self, connector, reason):
-        print('[%s] Lost connection, reconnecting...' % self.config.server)
+        print('[%s] Lost connection, reconnecting...' % self.config.server_name)
         connector.connect()
 
     def clientConnectionFailed(self, connector, reason):
-        print('[%s] Could not connect: %s' % (self.config.server, reason.value))
+        print('[%s] Could not connect: %s' % (self.config.server_name, reason.value))

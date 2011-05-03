@@ -22,13 +22,11 @@ try:
 except NameError:
     from sets import Set as set
 
-import config as settings
 from core import NAME, VERSION
-from core.config.configobj import ConfigObj
 
 
 CONFIG_RULES = {
-    'server_alias': {
+    'server_name': {
         'mandatory': True,
         'type': basestring,
     },
@@ -116,18 +114,21 @@ class ConfigObject(object):
     """
     Object containing options for a given server.
     constructor:
-        @param server (str): server name for which the config is
+        @param config_dict (dict): configuration options/values
     """
     def __init__(self, config_dict):
         if not 'server_name' in config_dict:
             raise MissingConfigOption('Unknown Server', 'server_name')
         for opt, rule in CONFIG_RULES.iteritems():
+            # check if mandatory rules are given
             if rule['mandatory']:
                 if not opt in config_dict:
                     raise MissingConfigOption(config_dict.get('server_name'), opt)
                 setattr(self, opt, config_dict.get(opt))
+            # set option with given value (or default if not given)
             else:
                 setattr(self, opt, config_dict.get(opt, rule.get('default')))
+            # check if option's type is as expected
             if not isinstance(getattr(self, opt), rule.get('type')):
                 raise ConfigTypeError(
                     self.server_name,
@@ -135,3 +136,5 @@ class ConfigObject(object):
                     opt.__class__.__name__,
                     rule.get('type').__class__.__name__,
                 )
+        if self.ssl and ('port' not in config_dict):
+            self.port = 6697

@@ -21,7 +21,8 @@ from multiprocessing import Process
 
 from twisted.internet import reactor, ssl
 
-from core.config import readConfig
+import settings
+from core.config import ConfigObject
 from core.ircbot import IrcBotFactory
 
 
@@ -42,18 +43,18 @@ class BotLauncher(object):
     def startBot(self, factory):
         """start a client.
         @param factory (object): factory to use to create the client"""
-        if factory.config.get('ssl', False):
+        if factory.config.ssl:
             try:
                 import OpenSSL
-                reactor.connectSSL(
-                    factory.config.get('host'),
-                    factory.config.get('port', 6697),
-                    factory,
-                    ssl.ClientContextFactory()
-                )
             except ImportError:
                 print("[%s] Can not connect using SSL, pyopenssl not found")
                 return
+            reactor.connectSSL(
+                    factory.config.host,
+                    factory.config.port,
+                    factory,
+                    ssl.ClientContextFactory()
+                )
         else:
             reactor.connectTCP(
                 factory.config.get('host'),
@@ -73,7 +74,8 @@ class BotLauncher(object):
 def main():
     """main function"""
     launcher = BotLauncher()
-    for config in readConfig('fatbotslim.conf'):
+    for config in settings.active_servers:
+        config = ConfigObject(config)
         launcher.addBot(config)
     launcher.startAll()
 

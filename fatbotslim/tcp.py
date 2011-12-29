@@ -16,10 +16,13 @@
 # along with FatBotSlim. If not, see <http://www.gnu.org/licenses/>.
 #
 
+from os import linesep
+from traceback import format_exc
 from gevent import spawn, joinall, killall
 from gevent.queue import Queue
 from gevent.socket import socket
 from gevent.ssl import wrap_socket
+from fatbotslim.log import create_logger
 
 class TCP(object):
     """
@@ -34,17 +37,21 @@ class TCP(object):
         self.iqueue = Queue()
         self.oqueue = Queue()
         self._socket = self._create_socket()
+        self.log = create_logger(__name__)
 
     def _create_socket(self):
         return socket()
 
     def _recv_loop(self):
         while True:
-            data = self._socket.recv(4096)
-            self._ibuffer += data
-            while '\r\n' in self._ibuffer:
-                line, self._ibuffer = self._ibuffer.split('\r\n', 1)
-                self.iqueue.put(line)
+            try:
+                data = self._socket.recv(4096)
+                self._ibuffer += data
+                while '\r\n' in self._ibuffer:
+                    line, self._ibuffer = self._ibuffer.split('\r\n', 1)
+                    self.iqueue.put(line)
+            except Exception:
+                break
 
     def _send_loop(self):
         while True:

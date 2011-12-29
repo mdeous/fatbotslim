@@ -16,13 +16,14 @@
 # along with FatBotSlim. If not, see <http://www.gnu.org/licenses/>.
 #
 
-from os import linesep
-from traceback import format_exc
 from gevent import spawn, joinall, killall
 from gevent.queue import Queue
 from gevent.socket import socket
 from gevent.ssl import wrap_socket
 from fatbotslim.log import create_logger
+
+log = create_logger(__name__)
+
 
 class TCP(object):
     """
@@ -37,7 +38,6 @@ class TCP(object):
         self.iqueue = Queue()
         self.oqueue = Queue()
         self._socket = self._create_socket()
-        self.log = create_logger(__name__)
 
     def _create_socket(self):
         return socket()
@@ -78,5 +78,6 @@ class SSL(TCP):
     SSL wrapper for TCP connections.
     """
     def _create_socket(self):
+        log.warning('No certificate check is performed for SSL connections')
         s = super(SSL, self)._create_socket()
         return wrap_socket(s)

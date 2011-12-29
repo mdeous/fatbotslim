@@ -23,6 +23,8 @@ from gevent.queue import Queue
 from fatbotslim.tcp import TCP, SSL
 from fatbotslim.log import create_logger
 
+log = create_logger(__name__)
+
 
 class NullMessage(Exception):
     pass
@@ -41,7 +43,6 @@ class IRC(object):
         self.realname = settings['realname']
         self.line = {'prefix': '', 'command': '', 'args': ['', '']}
         self.lines = Queue()
-        self.log = create_logger(__name__)
 
     def _create_connection(self):
         transport = SSL if self.ssl else TCP
@@ -57,7 +58,7 @@ class IRC(object):
         self.conn.disconnect()
 
     def _send(self, command):
-        self.log.debug(command)
+        log.debug(command)
         self.conn.oqueue.put(command)
 
     def _parse_msg(self, msg):
@@ -87,11 +88,11 @@ class IRC(object):
         """
         while True:
             line = self.conn.iqueue.get()
-            self.log.debug(line)
+            log.debug(line)
             try:
                 prefix, command, args = self._parse_msg(line)
             except ValueError:
-                self.log.error("Received a line that can't be parsed:%(linesep)s%(line)s%(linesep)s%(exception)s" % dict(
+                log.error("Received a line that can't be parsed:%(linesep)s%(line)s%(linesep)s%(exception)s" % dict(
                     linesep=linesep, line=line, exception=format_exc()
                 ))
                 continue

@@ -19,6 +19,9 @@
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from fatbotslim import NAME, VERSION
 from fatbotslim.irc import spawn_client
+from fatbotslim.log import create_logger
+
+log = create_logger(__name__)
 
 
 def make_parser():
@@ -37,6 +40,7 @@ def make_parser():
     return parser
 
 def main():
+    log.info("Running from the command line")
     parser = make_parser()
     args = parser.parse_args()
     settings = {
@@ -51,6 +55,7 @@ def main():
     try:
         greenlet.join()
     except KeyboardInterrupt:
+        log.info("Killed by user, disconnecting...")
         bot.conn.disconnect()
     finally:
         greenlet.kill()

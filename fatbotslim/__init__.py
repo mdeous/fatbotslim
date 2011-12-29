@@ -15,3 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with FatBotSlim. If not, see <http://www.gnu.org/licenses/>.
 #
+
+NAME = 'FatBotSlim'
+VERSION = '0.1'
+AUTHOR = 'Mathieu D. (MatToufoutu)'

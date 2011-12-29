@@ -42,8 +42,6 @@ class IRC(object):
         self.line = {'prefix': '', 'command': '', 'args': ['', '']}
         self.lines = Queue()
         self.log = create_logger(__name__)
-        self._connect()
-        self._event_loop()
 
     def _create_connection(self):
         transport = SSL if self.ssl else TCP
@@ -122,3 +120,12 @@ class IRC(object):
 
     def msg(self, target, msg):
         self.cmd('PRIVMSG', ('{0} :{1}'.format(target, msg)))
+
+    def run(self):
+        self._connect()
+        self._event_loop()
+
+
+def spawn_client(settings):
+    client = IRC(settings)
+    return spawn(client.run), client

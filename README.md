@@ -10,5 +10,4 @@ Just another Python-powered IRC bot...
 
 ## Dependencies
 
-- python-twisted
-- pyopenssl (optional: required for SSL connections)
+- gevent

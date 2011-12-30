@@ -40,7 +40,9 @@ class TCP(object):
         self._socket = self._create_socket()
 
     def _create_socket(self):
-        return socket()
+        s = socket()
+        s.settimeout(self.timeout)
+        return s
 
     def _recv_loop(self):
         while True:

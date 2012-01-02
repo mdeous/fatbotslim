@@ -57,11 +57,14 @@ class TCP(object):
 
     def _send_loop(self):
         while True:
-            line = self.oqueue.get().splitlines()[0][:500]
-            self._obuffer += line.encode('utf-8', 'replace') + '\r\n'
-            while self._obuffer:
-                sent = self._socket.send(self._obuffer)
-                self._obuffer = self._obuffer[sent:]
+            try:
+                line = self.oqueue.get().splitlines()[0][:500]
+                self._obuffer += line.encode('utf-8', 'replace') + '\r\n'
+                while self._obuffer:
+                    sent = self._socket.send(self._obuffer)
+                    self._obuffer = self._obuffer[sent:]
+            except Exception:
+                break
 
     def connect(self):
         self._socket.connect((self.host, self.port))

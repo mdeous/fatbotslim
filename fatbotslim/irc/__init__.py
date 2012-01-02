@@ -35,16 +35,17 @@ class NullMessage(Exception):
 class Message(object):
     def __init__(self, data):
         self._raw = data
-        self.src, self.command, self.args = Message.parse(data)
+        self.src, self.dst, self.command, self.args = Message.parse(data)
 
     def __str__(self):
-        return "<Message(prefix='{0}', command='{1}', args='{2}')>".format(
+        return "<Message(prefix='{0}', command='{1}', args={2})>".format(
             self.src.name, self.command, self.args
         )
 
     @classmethod
     def parse(cls, data):
         src = ''
+        dst = None
         if not data:
             raise NullMessage('Received an empty line from the server')
         if data[0] == ':':
@@ -56,7 +57,9 @@ class Message(object):
         else:
             args = data.split()
         command = args.pop(0)
-        return Source(src), command, args
+        if command == PRIVMSG:
+            dst = args.pop(0)
+        return Source(src), dst, command, args
 
 
 class Source(object):

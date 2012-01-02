@@ -19,15 +19,16 @@
 import logging
 
 
-def create_logger(name):
+def create_logger(name, level='INFO'):
     formatter = logging.Formatter(
-        '%(asctime)s [%(name)s] %(levelname)s - %(message)s',
+        '%(levelname)s - %(asctime)s [%(name)s] %(message)s',
         '%Y-%m-%d %H:%M:%S'
     )
+    if not isinstance(logging.getLevelName(level), int):
+        level = 'INFO'
     handler = logging.StreamHandler()
-    handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(level)
     logger.addHandler(handler)
     return logger

@@ -17,8 +17,9 @@
 #
 
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+from gevent import spawn
 from fatbotslim import NAME, VERSION
-from fatbotslim.irc import spawn_client
+from fatbotslim.irc import IRC
 from fatbotslim.log import create_logger
 
 log = create_logger(__name__)
@@ -28,15 +29,54 @@ def make_parser():
     parser = ArgumentParser(
             description='Start an IRC bot instance from the command line.',
             formatter_class=ArgumentDefaultsHelpFormatter,
-
-        )
-    parser.add_argument('-v', '--version', action='version', version='{0} v{1}'.format(NAME, VERSION))
-    parser.add_argument('-s', '--server', metavar='HOST', help='the host to connect to', default='irc.freenode.net')
-    parser.add_argument('-p', '--port', metavar='PORT', type=int, default=6667, help='the port the server is listening on')
-    parser.add_argument('-n', '--nick', metavar='NAME', default=NAME, help="the bot's nickname")
-    parser.add_argument('-N', '--name', metavar='NAME', default=NAME, help="the bot's real name")
-    parser.add_argument('-c', '--channels', metavar='CHAN', nargs='*', help='join this channel upon connection')
-    parser.add_argument('--ssl', action='store_true', help='connect to the server using SSL')
+    )
+    parser.add_argument(
+        '-v', '--version',
+        action='version',
+        version='{0} v{1}'.format(NAME, VERSION)
+    )
+    parser.add_argument(
+        '-s', '--server',
+        metavar='HOST',
+        default='irc.freenode.net',
+        help='the host to connect to'
+    )
+    parser.add_argument(
+        '-p', '--port',
+        metavar='PORT',
+        type=int,
+        default=6667,
+        help='the port the server is listening on'
+    )
+    parser.add_argument(
+        '-n', '--nick',
+        metavar='NAME',
+        default=NAME,
+        help="the bot's nickname"
+    )
+    parser.add_argument(
+        '-N', '--name',
+        metavar='NAME',
+        default=NAME,
+        help="the bot's real name"
+    )
+    parser.add_argument(
+        '-c', '--channels',
+        metavar='CHAN',
+        nargs='*',
+        help='join this channel upon connection'
+    )
+    parser.add_argument(
+        '-l', '--log',
+        metavar='LEVEL',
+        default='INFO',
+        help='minimal level for displayed logging messages'
+    )
+    parser.add_argument(
+        '-S', '--ssl',
+        action='store_true',
+        help='connect to the server using SSL'
+    )
     return parser
 
 def main():
@@ -50,12 +90,14 @@ def main():
         'nick': args.nick,
         'realname': args.name,
         'channels': args.channels or [],
+        'loglevel': args.log,
     }
-    greenlet, bot = spawn_client(settings)
+    bot = IRC(settings)
+    greenlet = spawn(bot.run)
     try:
         greenlet.join()
     except KeyboardInterrupt:
         log.info("Killed by user, disconnecting...")
-        bot.conn.disconnect()
+        bot.disconnect()
     finally:
         greenlet.kill()

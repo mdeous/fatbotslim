@@ -16,11 +16,15 @@
 # along with FatBotSlim. If not, see <http://www.gnu.org/licenses/>.
 #
 
+from collections import defaultdict
 from os import linesep
+from random import choice
 from traceback import format_exc
 from gevent import spawn
+from gevent.pool import Group
 from gevent.queue import Queue
-from fatbotslim.tcp import TCP, SSL
+from fatbotslim.irc.codes import *
+from fatbotslim.irc.tcp import TCP, SSL
 from fatbotslim.log import create_logger
 
 log = create_logger(__name__)
@@ -28,6 +32,28 @@ log = create_logger(__name__)
 
 class NullMessage(Exception):
     pass
+
+
+class Message(object):
+    def __init__(self, data):
+        self._raw = data
+        self.prefix, self.command, self.args = Message.parse(data)
+
+    @classmethod
+    def parse(cls, data):
+        prefix = ''
+        if not data:
+            raise NullMessage('Received an empty line from the server')
+        if data[0] == ':':
+            prefix, msg = data[1:].split(' ', 1)
+        if data.find(' :'):
+            msg, trailing = data.split(' :', 1)
+            args = msg.split()
+            args.append(trailing)
+        else:
+            args = data.split()
+        command = args.pop(0)
+        return prefix, command, args
 
 
 class IRC(object):
@@ -43,6 +69,8 @@ class IRC(object):
         self.realname = settings['realname']
         self.line = {'prefix': '', 'command': '', 'args': ['', '']}
         self.lines = Queue()
+        self._pool = Group()
+        self._handlers = defaultdict(set)
 
     def _create_connection(self):
         transport = SSL if self.ssl else TCP
@@ -65,8 +93,8 @@ class IRC(object):
         """
         Breaks a message from an IRC server into its prefix, command, and arguments.
         """
+        #TODO: use a Message object to store received data
         prefix = ''
-        trailing = []
         if not msg:
             raise NullMessage('Received an empty line from the server')
         if msg[0] == ':':
@@ -90,21 +118,26 @@ class IRC(object):
             line = self.conn.iqueue.get()
             log.debug(line)
             try:
-                prefix, command, args = self._parse_msg(line)
+                message = Message(line)
+#                prefix, command, args = self._parse_msg(line)
             except ValueError:
                 log.error("Received a line that can't be parsed:%(linesep)s%(line)s%(linesep)s%(exception)s" % dict(
                     linesep=linesep, line=line, exception=format_exc()
                 ))
                 continue
-            self.line = {'prefix': prefix, 'command': command, 'args': args}
+            self.line = {
+                'prefix': message.prefix,
+                'command': message.command,
+                'args': message.args
+            }
             self.lines.put(self.line)
-            if command == '433': # nick in use
-                self.nick += '_' #TODO: generate random suffix
-                self._set_nick(self.nick)
-            elif command == 'PING':
-                self.cmd('PONG', args)
-            elif command == '001':
+            if message.command == ERR_NICKNAMEINUSE:
+                self._set_nick(IRC.randomize_nick(self.nick))
+            elif message.command == PING:
+                self.cmd('PONG', message.args)
+            elif message.command == CONNECTED:
                 self._join_chans(self.channels)
+            self._handle(message)
 
     def _set_nick(self, nick):
         self.cmd('NICK', nick)
@@ -112,6 +145,19 @@ class IRC(object):
     def _join_chans(self, channels):
         for c in channels:
             self.cmd('JOIN', c)
+
+    def _handle(self, msg):
+        for handler in self._handlers[msg.command]:
+            self._pool.spawn(handler, msg, self)
+
+    @classmethod
+    def randomize_nick(cls, base, suffix_length=3):
+        suffix = ''.join(choice('0123456789') for _ in range(suffix_length))
+        return '{0}_{1}'.format(base, suffix)
+
+    def add_handler(self, handler):
+        for command in handler.commands:
+            self._handlers[command].add(handler.commands[command])
 
     def cmd(self, command, args, prefix=None):
         if prefix is None:

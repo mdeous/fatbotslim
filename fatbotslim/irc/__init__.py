@@ -17,7 +17,6 @@
 #
 
 import re
-from collections import defaultdict
 from os import linesep
 from random import choice
 from traceback import format_exc
@@ -25,6 +24,7 @@ from gevent import spawn
 from gevent.pool import Group
 from fatbotslim.irc.codes import *
 from fatbotslim.irc.tcp import TCP, SSL
+from fatbotslim.handlers import CTCPHandler, PingHandler, UnknownCodeHandler
 from fatbotslim.log import create_logger
 
 ctcp_re = re.compile(r'\x01(.*?)\x01')
@@ -99,6 +99,11 @@ class IRC(object):
     Provides a basic interface to an IRC server.
     """
     quit_msg = "I'll be back!"
+    default_handlers = {
+        CTCPHandler(),
+        PingHandler(),
+        UnknownCodeHandler(),
+    }
 
     def __init__(self, settings):
         self.server = settings['server']
@@ -108,8 +113,10 @@ class IRC(object):
         self.nick = settings['nick']
         self.realname = settings['realname']
         self._pool = Group()
-        self._handlers = defaultdict(set)
+        self._handlers = set()
         self.log = create_logger(__name__, level=settings.get('loglevel', 'INFO'))
+        for handler in self.default_handlers:
+            self.add_handler(handler)
 
     def _create_connection(self):
         transport = SSL if self.ssl else TCP
@@ -144,12 +151,8 @@ class IRC(object):
                 continue
             if message.command == ERR_NICKNAMEINUSE:
                 self._set_nick(IRC.randomize_nick(self.nick))
-            elif message.command == PING:
-                self.cmd('PONG', message.args)
             elif message.command == RPL_CONNECTED:
                 self._join_chans(self.channels)
-            if message.command not in ALL_CODES:
-                self.log.info("Unknown code received: {0}".format(message.command))
             self._handle(message)
 
     def _set_nick(self, nick):
@@ -160,8 +163,10 @@ class IRC(object):
             self.cmd('JOIN', c)
 
     def _handle(self, msg):
-        for handler in self._handlers[msg.command]:
-            self._pool.spawn(handler, msg, self)
+        for handler in self._handlers:
+            for command in handler.commands:
+                if command == msg.command:
+                    self._pool.spawn(handler.commands[command], msg, self)
 
     @classmethod
     def randomize_nick(cls, base, suffix_length=3):
@@ -169,8 +174,7 @@ class IRC(object):
         return '{0}_{1}'.format(base, suffix)
 
     def add_handler(self, handler):
-        for command in handler.commands:
-            self._handlers[command].add(handler.commands[command])
+        self._handlers.add(handler)
 
     def cmd(self, command, args, prefix=None):
         if prefix is None:

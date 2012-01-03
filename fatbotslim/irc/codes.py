@@ -347,3 +347,15 @@ OTHERS = {
 }
 
 ALL_CODES = ERRORS | RESPONSES | RESERVED | CTCP | OTHERS
+
+
+class UnknownCode(object):
+    def __init__(self, known_codes):
+        self.known_codes = set(known_codes)
+
+    def __eq__(self, other):
+        return other not in self.known_codes
+
+    def __ne__(self, other):
+        return other in self.known_codes
+UNKNOWN_CODE = UnknownCode(ALL_CODES)

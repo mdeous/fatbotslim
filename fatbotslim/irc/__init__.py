@@ -16,16 +16,18 @@
 # along with FatBotSlim. If not, see <http://www.gnu.org/licenses/>.
 #
 
+import re
 from collections import defaultdict
 from os import linesep
 from random import choice
 from traceback import format_exc
 from gevent import spawn
 from gevent.pool import Group
-from fatbotslim import NAME, VERSION
 from fatbotslim.irc.codes import *
 from fatbotslim.irc.tcp import TCP, SSL
 from fatbotslim.log import create_logger
+
+ctcp_re = re.compile(r'\x01(.*?)\x01')
 
 
 class NullMessage(Exception):
@@ -38,7 +40,7 @@ class Message(object):
         self.src, self.dst, self.command, self.args = Message.parse(data)
 
     def __str__(self):
-        return "<Message(prefix='{0}', command='{1}', args={2})>".format(
+        return "<Message(src='{0}', command='{1}', args={2})>".format(
             self.src.name, self.command, self.args
         )
 
@@ -59,6 +61,9 @@ class Message(object):
         command = args.pop(0)
         if command == PRIVMSG:
             dst = args.pop(0)
+            if ctcp_re.match(args[0]):
+                args = args[0].strip('\x01').split()
+                command = 'CTCP_'+args.pop(0)
         return Source(src), dst, command, args
 
 
@@ -94,7 +99,6 @@ class IRC(object):
     Provides a basic interface to an IRC server.
     """
     quit_msg = "I'll be back!"
-    version = '{0} v{1}'.format(NAME, VERSION)
 
     def __init__(self, settings):
         self.server = settings['server']
@@ -174,17 +178,22 @@ class IRC(object):
         raw_cmd = '{0} {1} {2}'.format(prefix, command, ''.join(args)).strip()
         self._send(raw_cmd)
 
+    def ctcp_reply(self, command, dst, message=None):
+        if message is None:
+            raw_cmd = '\x01{0}\x01'.format(command)
+        else:
+            raw_cmd = '\x01{0} {1}\x01'.format(command, message)
+        self.notice(dst, raw_cmd)
+
     def msg(self, target, msg):
-        self.cmd('PRIVMSG', ('{0} :{1}'.format(target, msg)))
+        self.cmd('PRIVMSG', ['{0} :{1}'.format(target, msg)])
+
+    def notice(self, target, msg):
+        self.cmd('NOTICE', ['{0} :{1}'.format(target, msg)])
 
     def disconnect(self):
-        self.cmd('QUIT', (':ByeBye!'))
+        self.cmd('QUIT', [':{0}'.format(self.quit_msg)])
 
     def run(self):
         self._connect()
         self._event_loop()
-
-
-def spawn_client(settings):
-    client = IRC(settings)
-    return spawn(client.run), client

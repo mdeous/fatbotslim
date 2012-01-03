@@ -19,9 +19,30 @@
 import logging
 
 
+class ColorFormatter(logging.Formatter):
+    _colors_map = {
+        'DEBUG': '\033[22;32m',
+        'INFO': '\033[01;34m',
+        'WARNING': '\033[22;35m',
+        'ERROR': '\033[22;31m',
+        'CRITICAL': '\033[01;31m'
+    }
+
+    def format(self, record):
+        level_length = len(record.levelname)
+        if record.levelname in self._colors_map:
+            record.levelname = '{0}{1}\033[0;0m'.format(
+                self._colors_map[record.levelname],
+                record.levelname
+            )
+        record.levelname += ' ' * (8 - level_length)
+        record.name = '\033[37m\033[1m{0}\033[0;0m'.format(record.name)
+        return super(ColorFormatter, self).format(record)
+
+
 def create_logger(name, level='INFO'):
-    formatter = logging.Formatter(
-        '%(levelname)s - %(asctime)s [%(name)s] %(message)s',
+    formatter = ColorFormatter(
+        '%(levelname)s [%(name)s] %(asctime)s - %(message)s',
         '%Y-%m-%d %H:%M:%S'
     )
     if not isinstance(logging.getLevelName(level), int):

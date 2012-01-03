@@ -80,7 +80,7 @@ def make_parser():
     return parser
 
 def main():
-    log.info("Running from the command line")
+    log.info("running from the command line")
     parser = make_parser()
     args = parser.parse_args()
     settings = {

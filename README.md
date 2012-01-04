@@ -4,9 +4,11 @@ Just another Python-powered IRC bot...
 
 ## Features
 
+- asynchronous
 - multi-server
-- supports per-server configuration, allowing to run many "unique" bots from a single instance
-- provides an easy to use plugin system
+- easy to use plugin system
+- colored logging
+- command line parser to set your custom bot settings from the console
 
 ## Dependencies
 

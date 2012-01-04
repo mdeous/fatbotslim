@@ -57,8 +57,8 @@ class Message(object):
         self.src, self.dst, self.command, self.args = Message.parse(data)
 
     def __str__(self):
-        return "<Message(src='{0}', command='{1}', args={2})>".format(
-            self.src.name, self.command, self.args
+        return "<Message(src='{0}', dst='{1}', command='{2}', args={3})>".format(
+            self.src.name, self.dst, self.command, self.args
         )
 
     @classmethod
@@ -85,7 +85,7 @@ class Message(object):
         else:
             args = data.split()
         command = args.pop(0)
-        if command == PRIVMSG:
+        if command in (PRIVMSG, NOTICE):
             dst = args.pop(0)
             if ctcp_re.match(args[0]):
                 args = args[0].strip('\x01').split()

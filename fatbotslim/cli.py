@@ -93,11 +93,7 @@ def make_parser():
     )
     return parser
 
-def main():
-    """
-    Entry point for the command line launcher.
-    """
-    log.info("running from the command line")
+def make_bot():
     parser = make_parser()
     args = parser.parse_args()
     settings = {
@@ -109,7 +105,12 @@ def main():
         'channels': args.channels or [],
         'loglevel': args.log,
     }
-    bot = IRC(settings)
+    return IRC(settings)
+
+def main(bot=make_bot()):
+    """
+    Entry point for the command line launcher.
+    """
     greenlet = spawn(bot.run)
     try:
         greenlet.join()

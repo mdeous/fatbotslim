@@ -90,3 +90,34 @@ class UnknownCodeHandler(object):
 
     def unknown_code(self, msg, irc):
         irc.log.info("Received an unknown command: {0}".format(msg.command))
+
+
+class CommandHandler(object):
+    """
+    A handler that reacts on PRIVMSG and NOTICE commands if the message starts
+    with a pre-defined character (default: '!') and dispatches the message
+    to a method with the same name as the command, if defined.
+    For example, the message "!foo bar" would call the `foo` method.
+    This class does nothing by itself and is meant to be overriden.
+    """
+    trigger = '!'
+
+    def __init__(self):
+        self.commands = {
+            PRIVMSG: self._dispatch,
+            NOTICE: self._dispatch
+        }
+
+    def _dispatch(self, msg, irc):
+        """
+        Dispatches the message to the corresponding method.
+        """
+        if not msg.args[0].startswith(self.trigger):
+            return
+        split_args = msg.args[0].split()
+        command = split_args[0].lstrip(self.trigger)
+        msg.args = split_args[1:]
+        if hasattr(self, command):
+            method = getattr(self, command)
+            if callable(method):
+                method(msg, irc)

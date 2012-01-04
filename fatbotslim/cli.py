@@ -15,6 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with FatBotSlim. If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+.. module:: fatbotslim.cli
+
+.. moduleauthor:: Mathieu D. (MatToufoutu)
+
+This module contains utilities to run a bot from the command line.
+"""
 
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from gevent import spawn
@@ -26,6 +33,13 @@ log = create_logger(__name__)
 
 
 def make_parser():
+    """
+    Creates an argument parser configured with options to run a bot
+    from the command line.
+
+    :return: configured argument parser
+    :rtype: :class:`argparse.ArgumentParser`
+    """
     parser = ArgumentParser(
             description='Start an IRC bot instance from the command line.',
             formatter_class=ArgumentDefaultsHelpFormatter,
@@ -80,6 +94,9 @@ def make_parser():
     return parser
 
 def main():
+    """
+    Entry point for the command line launcher.
+    """
     log.info("running from the command line")
     parser = make_parser()
     args = parser.parse_args()

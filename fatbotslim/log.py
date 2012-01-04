@@ -15,11 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with FatBotSlim. If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+.. module:: fatbotslim.log
+
+.. moduleauthor:: Mathieu D. (MatToufoutu)
+
+This module contains everything useful to enable logging.
+"""
 
 import logging
 
 
 class ColorFormatter(logging.Formatter):
+    """
+    A logging formatter that displays the loglevel with colors and
+    the logger name in bold.
+    """
     _colors_map = {
         'DEBUG': '\033[22;32m',
         'INFO': '\033[01;34m',
@@ -29,6 +40,10 @@ class ColorFormatter(logging.Formatter):
     }
 
     def format(self, record):
+        """
+        Overrides the default :method:`logging.Formatter.format` to add
+        colors to `record`'s `levelname` and `name` attributes.
+        """
         level_length = len(record.levelname)
         if record.levelname in self._colors_map:
             record.levelname = '{0}{1}\033[0;0m'.format(
@@ -41,6 +56,16 @@ class ColorFormatter(logging.Formatter):
 
 
 def create_logger(name, level='INFO'):
+    """
+    Creates a new ready-to-use logger.
+
+    :param name: new logger's name
+    :type name: str
+    :param level: default logging level.
+    :type level: str or int
+    :return: new logger.
+    :rtype: :class:`logging.Logger`
+    """
     formatter = ColorFormatter(
         '%(levelname)s [%(name)s] %(asctime)s - %(message)s',
         '%Y-%m-%d %H:%M:%S'

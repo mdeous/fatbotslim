@@ -15,6 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with FatBotSlim. If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+.. module:: fatbotslim.irc.tcp
+
+.. moduleauthor:: Mathieu D. (MatToufoutu)
+
+This module contains the low-level networking stuff.
+"""
 
 from gevent import spawn, joinall, killall
 from gevent.queue import Queue
@@ -30,6 +37,14 @@ class TCP(object):
     Wraps a TCP connection.
     """
     def __init__(self, host, port, timeout=300):
+        """
+        :param host: server's hostname
+        :type host: str
+        :param port: server's port
+        :type port: int
+        :param timeout: maximum time a request/response should last.
+        :type timeout: int
+        """
         self.host = host
         self.port = port
         self.timeout = timeout
@@ -40,11 +55,20 @@ class TCP(object):
         self._socket = self._create_socket()
 
     def _create_socket(self):
+        """
+        Creates a new socket and sets its timeout.
+
+        :return: new socket.
+        :rtype: :class:`gevent.socket.socket`
+        """
         s = socket()
         s.settimeout(self.timeout)
         return s
 
     def _recv_loop(self):
+        """
+        Waits for data forever and feeds the input queue.
+        """
         while True:
             try:
                 data = self._socket.recv(4096)
@@ -56,6 +80,9 @@ class TCP(object):
                 break
 
     def _send_loop(self):
+        """
+        Waits for data in the output queue to send.
+        """
         while True:
             try:
                 line = self.oqueue.get().splitlines()[0][:500]
@@ -67,6 +94,9 @@ class TCP(object):
                 break
 
     def connect(self):
+        """
+        Connects the socket and spawns the send/receive loops.
+        """
         self._socket.connect((self.host, self.port))
         try:
             jobs = [spawn(self._recv_loop), spawn(self._send_loop)]
@@ -75,14 +105,20 @@ class TCP(object):
             killall(jobs)
 
     def disconnect(self):
+        """
+        Closes the socket.
+        """
         self._socket.close()
 
 
 class SSL(TCP):
     """
-    SSL wrapper for TCP connections.
+    SSL wrapper for a :class:`fatbotslim.irc.tcp.TCP` connection.
     """
     def _create_socket(self):
+        """
+        Creates a new SSL enabled socket and sets its timeout.
+        """
         log.warning('No certificate check is performed for SSL connections')
         s = super(SSL, self)._create_socket()
         return wrap_socket(s)

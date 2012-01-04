@@ -15,6 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with FatBotSlim. If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+.. module:: fatbotslim.handlers
+
+.. moduleauthor:: Mathieu D. (MatToufoutu)
+
+This module contains a collection of handlers to react to basic IRC events
+and allow creation of custom handlers.
+
+Handlers should at least have a `commands` attribute of type `dict` which
+maps IRC codes (as defined in :module:`fatbotslim.irc.codes`) to methods.
+Mapped methods take 2 arguments, the :class:`fatbotslim.irc.Message` object
+that triggered the event, and a :class:`fatbotslim.irc.IRC` instance, which
+should be used to send messages back to the server/user.
+"""
 
 import platform
 from datetime import datetime
@@ -23,6 +37,9 @@ from fatbotslim.irc.codes import *
 
 
 class CTCPHandler(object):
+    """
+    Reacts to CTCP events (VERSION,SOURCE,TIME,PING).
+    """
     def __init__(self):
         self.commands = {
             CTCP_VERSION: self.version,
@@ -50,6 +67,9 @@ class CTCPHandler(object):
 
 
 class PingHandler(object):
+    """
+    Answers to PINGs sent by the server.
+    """
     def __init__(self):
         self.commands = {
             PING: self.ping,
@@ -60,6 +80,9 @@ class PingHandler(object):
 
 
 class UnknownCodeHandler(object):
+    """
+    Logs messages for which the IRC code is unknown.
+    """
     def __init__(self):
         self.commands = {
             UNKNOWN_CODE: self.unknown_code,

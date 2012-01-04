@@ -15,6 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with FatBotSlim. If not, see <http://www.gnu.org/licenses/>.
 #
+"""
+.. module:: fatbotslim.irc
+
+.. moduleauthor:: Mathieu D. (MatToufoutu)
+
+This module contains IRC protocol related stuff.
+"""
 
 import re
 from os import linesep
@@ -31,11 +38,21 @@ ctcp_re = re.compile(r'\x01(.*?)\x01')
 
 
 class NullMessage(Exception):
+    """
+    Raised when an empty line is received from the server.
+    """
     pass
 
 
 class Message(object):
+    """
+    Holds informations about a line received from the server.
+    """
     def __init__(self, data):
+        """
+        :param data: line received from the server.
+        :type data: str
+        """
         self._raw = data
         self.src, self.dst, self.command, self.args = Message.parse(data)
 
@@ -46,6 +63,15 @@ class Message(object):
 
     @classmethod
     def parse(cls, data):
+        """
+        Extracts message informations from `data`.
+
+        :param data: received line.
+        :type data: str
+        :return: extracted informations (source, destination, command, args).
+        :rtype: tuple
+        :raise: :class:`fatbotslim.irc.NullMessage` if `data` is empty.
+        """
         src = ''
         dst = None
         if not data:
@@ -68,9 +94,17 @@ class Message(object):
 
 
 class Source(object):
-    def __init__(self, data):
-        self._raw = data
-        self.name, self.mode, self.user, self.host = Source.parse(data)
+    """
+    Holds informations about a message sender.
+
+    """
+    def __init__(self, prefix):
+        """
+        :param prefix: raw prefix with format "<servername>|<nick>['!'<user>]['@'<host>]".
+        :type prefix: str
+        """
+        self._raw = prefix
+        self.name, self.mode, self.user, self.host = Source.parse(prefix)
 
     def __str__(self):
         return "<Source(nick='{0}', mode='{1}', user='{2}', host='{3}')>".format(
@@ -78,11 +112,19 @@ class Source(object):
         )
 
     @classmethod
-    def parse(cls, name):
+    def parse(cls, prefix):
+        """
+        Extracts informations from `prefix`.
+
+        :param prefix: raw prefix with format "<servername>|<nick>['!'<user>]['@'<host>]".
+        :type prefix: str
+        :return: extracted informations (nickname or host, mode, username, host).
+        :rtype: tuple
+        """
         try:
-            nick, rest = name.split('!')
+            nick, rest = prefix.split('!')
         except ValueError:
-            return name, None, None, None
+            return prefix, None, None, None
         try:
             mode, rest = rest.split('=')
         except ValueError:
@@ -106,6 +148,10 @@ class IRC(object):
     }
 
     def __init__(self, settings):
+        """
+        :param settings: bot and target server configuration.
+        :type settings: dict
+        """
         self.server = settings['server']
         self.port = settings['port']
         self.ssl = settings['ssl']
@@ -119,24 +165,39 @@ class IRC(object):
             self.add_handler(handler)
 
     def _create_connection(self):
+        """
+        Creates a transport channel.
+
+        :return: transport channel instance
+        :rtype: :class:`fatbotslim.irc.tcp.TCP` or :class:`fatbotslim.irc.tcp.SSL`
+        """
         transport = SSL if self.ssl else TCP
         return transport(self.server, self.port)
 
     def _connect(self):
+        """
+        Connects the bot to the server and identifies itself.
+        """
         self.conn = self._create_connection()
         spawn(self.conn.connect)
         self._set_nick(self.nick)
         self.cmd('USER', (self.nick, ' 3 ', '* ', self.realname))
 
     def _send(self, command):
+        """
+        Sends a raw line to the server.
+
+        :param command: line to send.
+        :type command: str
+        """
         self.log.debug('-> '+command)
         self.conn.oqueue.put(command)
 
     def _event_loop(self):
         """
         The main event loop.
-        Data from the server is parsed here using `_parse_msg`. Parsed events are
-        put in the object's event queue (`self.events`).
+        Data from the server is parsed here using `_parse_msg`.
+        Parsed events are put in the object's event queue (`self.events`).
         """
         while True:
             line = self.conn.iqueue.get()
@@ -156,13 +217,31 @@ class IRC(object):
             self._handle(message)
 
     def _set_nick(self, nick):
+        """
+        Changes the bot's nickname.
+
+        :param nick: new nickname to use.
+        :type nick: str
+        """
         self.cmd('NICK', nick)
 
     def _join_chans(self, channels):
+        """
+        Join channels.
+
+        :param channels: channels to join.
+        :type channels: list
+        """
         for c in channels:
             self.cmd('JOIN', c)
 
     def _handle(self, msg):
+        """
+        Pass a received message to the registered handlers.
+
+        :param msg: received message
+        :type msg: :class:`fatbotslim.irc.Message`
+        """
         for handler in self._handlers:
             for command in handler.commands:
                 if command == msg.command:
@@ -170,19 +249,55 @@ class IRC(object):
 
     @classmethod
     def randomize_nick(cls, base, suffix_length=3):
+        """
+        Generates a pseudo-random nickname.
+
+        :param base: prefix to use for the generated nickname.
+        :type base: str
+        :param suffix_length: amount of digits to append to `base`
+        :type suffix_length: int
+        :return: generated nickname.
+        :rtype: str
+        """
         suffix = ''.join(choice('0123456789') for _ in range(suffix_length))
         return '{0}_{1}'.format(base, suffix)
 
     def add_handler(self, handler):
+        """
+        Registers a new handler.
+
+        :param handler: handler to register.
+        :type handler: object
+        """
         self._handlers.add(handler)
 
     def cmd(self, command, args, prefix=None):
+        """
+        Sends a command to the server.
+
+        :param command: IRC code to send.
+        :type command: str
+        :param args: arguments to pass with the command.
+        :type args: list
+        :param prefix: optional prefix to prepend to the command.
+        :type prefix: str or None
+        """
         if prefix is None:
             prefix = ''
         raw_cmd = '{0} {1} {2}'.format(prefix, command, ''.join(args)).strip()
         self._send(raw_cmd)
 
     def ctcp_reply(self, command, dst, message=None):
+        """
+        Sends a reply to a CTCP request.
+
+        :param command: CTCP command to use.
+        :type command: str
+        :param dst: sender of the initial request.
+        :type dst: str
+        :param message: data to attach to the reply.
+        :type message: str
+        """
         if message is None:
             raw_cmd = '\x01{0}\x01'.format(command)
         else:
@@ -190,14 +305,36 @@ class IRC(object):
         self.notice(dst, raw_cmd)
 
     def msg(self, target, msg):
+        """
+        Sends a message to an user or channel.
+
+        :param target: user or channel to send to.
+        :type target: str
+        :param msg: message to send.
+        :type msg: str
+        """
         self.cmd('PRIVMSG', ['{0} :{1}'.format(target, msg)])
 
     def notice(self, target, msg):
+        """
+        Sends a NOTICE to an user or channel.
+
+        :param target: user or channel to send to.
+        :type target: str
+        :param msg: message to send.
+        :type msg: str
+        """
         self.cmd('NOTICE', ['{0} :{1}'.format(target, msg)])
 
     def disconnect(self):
+        """
+        Disconnects the bot from the server.
+        """
         self.cmd('QUIT', [':{0}'.format(self.quit_msg)])
 
     def run(self):
+        """
+        Connects the bot and starts the event loop.
+        """
         self._connect()
         self._event_loop()

@@ -46,6 +46,10 @@ class ColorFormatter(logging.Formatter):
         """
         level_length = len(record.levelname)
         if record.levelname in self._colors_map:
+            record.msg = '{0}{1}\033[0;0m'.format(
+                self._colors_map[record.levelname],
+                record.msg
+            )
             record.levelname = '{0}{1}\033[0;0m'.format(
                 self._colors_map[record.levelname],
                 record.levelname

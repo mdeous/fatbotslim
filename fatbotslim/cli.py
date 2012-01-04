@@ -94,6 +94,9 @@ def make_parser():
     return parser
 
 def make_bot():
+    """
+    Creates a new bot instance ready to be launched.
+    """
     parser = make_parser()
     args = parser.parse_args()
     settings = {

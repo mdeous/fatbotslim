@@ -180,7 +180,7 @@ class IRC(object):
         """
         self.conn = self._create_connection()
         spawn(self.conn.connect)
-        self._set_nick(self.nick)
+        self.set_nick(self.nick)
         self.cmd('USER', (self.nick, ' 3 ', '* ', self.realname))
 
     def _send(self, command):
@@ -211,29 +211,11 @@ class IRC(object):
                 ))
                 continue
             if message.command == ERR_NICKNAMEINUSE:
-                self._set_nick(IRC.randomize_nick(self.nick))
+                self.set_nick(IRC.randomize_nick(self.nick))
             elif message.command == RPL_CONNECTED:
-                self._join_chans(self.channels)
+                for channel in self.channels:
+                    self.join(channel)
             self._handle(message)
-
-    def _set_nick(self, nick):
-        """
-        Changes the bot's nickname.
-
-        :param nick: new nickname to use.
-        :type nick: str
-        """
-        self.cmd('NICK', nick)
-
-    def _join_chans(self, channels):
-        """
-        Join channels.
-
-        :param channels: channels to join.
-        :type channels: list
-        """
-        for c in channels:
-            self.cmd('JOIN', c)
 
     def _handle(self, msg):
         """
@@ -325,6 +307,24 @@ class IRC(object):
         :type msg: basestring
         """
         self.cmd('NOTICE', ['{0} :{1}'.format(target, msg)])
+
+    def join(self, channel):
+        """
+        Make the bot join a channel.
+
+        :param channel: new channel to join.
+        :type channel: str
+        """
+        self.cmd('JOIN', channel)
+
+    def set_nick(self, nick):
+        """
+        Changes the bot's nickname.
+
+        :param nick: new nickname to use
+        :type nick: str
+        """
+        self.cmd('NICK', nick)
 
     def disconnect(self):
         """

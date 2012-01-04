@@ -69,7 +69,7 @@ class Message(object):
         :param data: received line.
         :type data: str
         :return: extracted informations (source, destination, command, args).
-        :rtype: tuple
+        :rtype: tuple(Source, str, str, list)
         :raise: :class:`fatbotslim.irc.NullMessage` if `data` is empty.
         """
         src = ''
@@ -119,7 +119,7 @@ class Source(object):
         :param prefix: raw prefix with format "<servername>|<nick>['!'<user>]['@'<host>]".
         :type prefix: str
         :return: extracted informations (nickname or host, mode, username, host).
-        :rtype: tuple
+        :rtype: tuple(str, str, str, str)
         """
         try:
             nick, rest = prefix.split('!')
@@ -278,7 +278,7 @@ class IRC(object):
         :param command: IRC code to send.
         :type command: str
         :param args: arguments to pass with the command.
-        :type args: list
+        :type args: iterable
         :param prefix: optional prefix to prepend to the command.
         :type prefix: str or None
         """
@@ -322,7 +322,7 @@ class IRC(object):
         :param target: user or channel to send to.
         :type target: str
         :param msg: message to send.
-        :type msg: str
+        :type msg: basestring
         """
         self.cmd('NOTICE', ['{0} :{1}'.format(target, msg)])
 

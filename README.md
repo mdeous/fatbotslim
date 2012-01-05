@@ -20,7 +20,10 @@ This very simple bot answers `Hello <username>!` when someone says `!hello` in a
 public message.
 
 Using the `fatbotslim.cli` helpers also gives your bot an integrated command line
-arguments parser and colored logging.
+arguments parser.
+
+For more detailed informations about writing custom handlers and more complex bots,
+please refer to the documentation (work in progress, look at the docstrings for now).
 
 ```python
 from fatbotslim.cli import make_bot, main

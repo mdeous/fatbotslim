@@ -1,8 +1,8 @@
-## Introduction
+## FatBotSlim
 
-Just another Python-powered IRC bot...
+Just another Python IRC bot library...
 
-## Features
+### Features:
 
 - asynchronous
 - multi-server
@@ -10,6 +10,33 @@ Just another Python-powered IRC bot...
 - colored logging
 - command line parser to set your custom bot settings from the console
 
-## Dependencies
+### Dependencies:
 
 - gevent
+
+## Example
+
+This very simple bot answers `Hello <username>!` when someone says `!hello` in a
+public message.
+
+Using the `fatbotslim.cli` helpers also gives your bot an integrated command line
+arguments parser and colored logging.
+
+```python
+from fatbotslim.cli import make_bot, main
+from fatbotslim.handlers import CommandHandler
+
+class HelloCommand(CommandHandler):
+    triggers = {
+        'hello': ('public',),
+    }
+    
+    def hello(self, msg, irc):
+        irc.msg(msg.dst, "Hello {0}!".format(msg.src.name))
+
+bot = make_bot()
+bot.add_handler(HelloCommand())
+main(bot)
+```
+
+*Just try it!*

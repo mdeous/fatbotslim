@@ -94,13 +94,30 @@ class UnknownCodeHandler(object):
 
 class CommandHandler(object):
     """
-    A handler that reacts on PRIVMSG and NOTICE commands if the message starts
-    with a pre-defined character (default: '!') and dispatches the message
-    to a method with the same name as the command, if defined.
+    The base for handlers that reacts on PRIVMSG and NOTICE commands
+    if the message starts with a pre-defined character (default: '!')
+    and dispatches the message to a method with the same name as the command.
+
+    Triggers and event types for which the method should be called must be
+    defined in the subclasse's `triggers` attribute. `triggers` is a dict
+    mapping method names to a tuple containing one or more event types.
+    An event type can be 'private', 'public', or 'notice'.
+
     For example, the message "!foo bar" would call the `foo` method.
     This class does nothing by itself and is meant to be overriden.
+
+    A command handler that says hello when it receives "!hello" in public:
+
+        class HelloCommand(CommandHandler):
+            triggers = {
+                'hello': ('public',),
+            }
+            def hello(self, msg, irc):
+                irc.msg(msg.dst, "Hello, {0}!".format(msg.src.name))
+
     """
-    trigger = '!'
+    trigger_char = '!'
+    triggers = {}
 
     def __init__(self):
         self.commands = {
@@ -112,12 +129,23 @@ class CommandHandler(object):
         """
         Dispatches the message to the corresponding method.
         """
-        if not msg.args[0].startswith(self.trigger):
+        if not msg.args[0].startswith(self.trigger_char):
             return
         split_args = msg.args[0].split()
-        command = split_args[0].lstrip(self.trigger)
+        trigger = split_args[0].lstrip(self.trigger_char)
         msg.args = split_args[1:]
-        if hasattr(self, command):
-            method = getattr(self, command)
-            if callable(method):
-                method(msg, irc)
+        if hasattr(self, trigger):
+            method = getattr(self, trigger)
+            # check if the method is present and registered in the triggers
+            if callable(method) and (trigger in self.triggers):
+                if msg.command == PRIVMSG:
+                    if msg.dst == irc.nick:
+                        if 'private' in self.triggers[trigger]:
+                            method(msg, irc)
+                    else:
+                        if 'public' in self.triggers[trigger]:
+                            method(msg, irc)
+                        pass
+                elif (msg.command == NOTICE) and ('notice' in self.triggers[trigger]):
+                    if 'notice' in self.triggers[trigger]:
+                        method(msg, irc)

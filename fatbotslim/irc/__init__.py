@@ -27,7 +27,7 @@ import re
 from os import linesep
 from random import choice
 from traceback import format_exc
-from gevent import spawn
+from gevent import spawn, joinall, killall
 from gevent.pool import Group
 from fatbotslim.irc.codes import *
 from fatbotslim.irc.tcp import TCP, SSL
@@ -338,3 +338,20 @@ class IRC(object):
         """
         self._connect()
         self._event_loop()
+
+
+def run_bots(bots):
+    """
+    Run many bots in parallel.
+
+    :param bots: IRC bots to run.
+    :type bots: list
+    """
+    greenlets = [spawn(bot.run) for bot in bots]
+    try:
+        joinall(greenlets)
+    except KeyboardInterrupt:
+        for bot in bots:
+            bot.disconnect()
+    finally:
+        killall(greenlets)

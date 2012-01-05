@@ -17,5 +17,5 @@
 #
 
 NAME = 'FatBotSlim'
-VERSION = '0.1'
+VERSION = '0.1b'
 AUTHOR = 'Mathieu D. (MatToufoutu)'

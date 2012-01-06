@@ -26,7 +26,7 @@ This module contains utilities to run a bot from the command line.
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from gevent import spawn
 from fatbotslim import NAME, VERSION
-from fatbotslim.irc import IRC
+from fatbotslim.irc.bot import IRC
 from fatbotslim.log import create_logger
 
 log = create_logger(__name__)

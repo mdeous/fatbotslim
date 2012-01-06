@@ -33,8 +33,4 @@ setup(
     include_package_data = True,
     zip_safe = False,
     install_requires = open(os.path.join(CURRENT_DIR, 'requirements.txt')).read().strip(),
-    entry_points = """
-    [console_scripts]
-    fatbotslim = fatbotslim.cli:main
-    """
 )

@@ -22,20 +22,22 @@ using FatBotSlim.
 """
 
 from fatbotslim.cli import make_bot, main
-from fatbotslim.irc.codes import PRIVMSG
 from fatbotslim.handlers import CommandHandler
 
 
 class HelloCommand(CommandHandler):
     """
     A sample command handler that makes the bot answer "Hello <user>!"
-    when someone uses the "!hello" command (only in private/public messages).
+    when someone uses the "!hello" command (only in public messages).
     """
+    triggers = {
+        'hello': ('public',),
+    }
+
     def hello(self, msg, irc):
-        if msg.command == PRIVMSG:
-            irc.msg(msg.dst, "Hello {0}!".format(msg.src.name))
+        irc.msg(msg.dst, "Hello {0}!".format(msg.src.name))
 
 
 bot = make_bot() # create a bot instance
 bot.add_handler(HelloCommand()) # register as many handlers as needed
-main(bot) # start the bot
+main(lambda: bot) # start the bot

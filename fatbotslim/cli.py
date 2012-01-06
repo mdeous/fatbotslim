@@ -52,7 +52,7 @@ def make_parser():
     parser.add_argument(
         '-s', '--server',
         metavar='HOST',
-        default='irc.freenode.net',
+        required=True,
         help='the host to connect to'
     )
     parser.add_argument(
@@ -65,7 +65,7 @@ def make_parser():
     parser.add_argument(
         '-n', '--nick',
         metavar='NAME',
-        default=NAME,
+        required=True,
         help="the bot's nickname"
     )
     parser.add_argument(

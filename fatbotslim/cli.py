@@ -110,10 +110,11 @@ def make_bot():
     }
     return IRC(settings)
 
-def main(bot=make_bot()):
+def main(bot_factory=make_bot):
     """
     Entry point for the command line launcher.
     """
+    bot = bot_factory()
     greenlet = spawn(bot.run)
     try:
         greenlet.join()

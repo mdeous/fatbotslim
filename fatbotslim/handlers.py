@@ -22,12 +22,6 @@
 
 This module contains a collection of handlers to react to basic IRC events
 and allow creation of custom handlers.
-
-Handlers should at least have a `commands` attribute of type `dict` which
-maps IRC codes (as defined in :module:`fatbotslim.irc.codes`) to methods.
-Mapped methods take 2 arguments, the :class:`fatbotslim.irc.Message` object
-that triggered the event, and a :class:`fatbotslim.irc.IRC` instance, which
-should be used to send messages back to the server/user.
 """
 
 import platform
@@ -36,9 +30,22 @@ from fatbotslim import NAME, VERSION
 from fatbotslim.irc.codes import *
 
 
-class CTCPHandler(object):
+class BaseHandler(object):
     """
-    Reacts to CTCP events (VERSION,SOURCE,TIME,PING).
+    The base of every handler.
+
+    A handler should at least have a :attr:`commands` attribute of type `dict` which
+    maps IRC codes (as defined in :mod:`fatbotslim.irc.codes`) to methods.
+
+    Mapped methods take 2 arguments, the :class:`fatbotslim.irc.bot.Message` object
+    that triggered the event, and a :class:`fatbotslim.irc.bot.IRC` instance, which
+    can be used to send messages back to the server.
+    """
+    commands = {}
+
+class CTCPHandler(BaseHandler):
+    """
+    Reacts to CTCP events (VERSION,SOURCE,TIME,PING). (enabled by default)
     """
     def __init__(self):
         self.commands = {
@@ -66,9 +73,9 @@ class CTCPHandler(object):
         irc.ctcp_reply('PING', msg.src.name, msg.args[0])
 
 
-class PingHandler(object):
+class PingHandler(BaseHandler):
     """
-    Answers to PINGs sent by the server.
+    Answers to PINGs sent by the server. (enabled by default)
     """
     def __init__(self):
         self.commands = {
@@ -79,9 +86,9 @@ class PingHandler(object):
         irc.cmd('PONG', msg.args)
 
 
-class UnknownCodeHandler(object):
+class UnknownCodeHandler(BaseHandler):
     """
-    Logs messages for which the IRC code is unknown.
+    Logs messages for which the IRC code is unknown. (enabled by default)
     """
     def __init__(self):
         self.commands = {
@@ -92,21 +99,24 @@ class UnknownCodeHandler(object):
         irc.log.info("Received an unknown command: {0}".format(msg.command))
 
 
-class CommandHandler(object):
+class CommandHandler(BaseHandler):
     """
-    The base for handlers that reacts on PRIVMSG and NOTICE commands
-    if the message starts with a pre-defined character (default: '!')
-    and dispatches the message to a method with the same name as the command.
+    The CommandHandler is a special kind of handler that eases the creation of
+    bots that react to prefixed commands (like "!command"). It only reacts to
+    PRIVMSG and NOTICE messages.
 
-    Triggers and event types for which the method should be called must be
-    defined in the subclasse's `triggers` attribute. `triggers` is a dict
-    mapping method names to a tuple containing one or more event types.
-    An event type can be 'private', 'public', or 'notice'.
+    The prefix character is defined by the handler's :attr:`trigger_char` attribute,
+    and defaults to '!'.
 
-    For example, the message "!foo bar" would call the `foo` method.
-    This class does nothing by itself and is meant to be overriden.
+    Commands are defined in the handler's :attr:`triggers` attribute, a dict that
+    maps method names to events to which they should react. Possible events
+    are 'public', 'private', and 'notice'. The methods should take 2 arguments,
+    the first is a :class:`fatbotslim.irc.bot.Message` object, and the second is a
+    :class:`fatbotslim.irc.bot.IRC` object used to send messages back to the server.
 
-    A command handler that says hello when it receives "!hello" in public:
+    For example, the message "!foo bar" would call the handler's :func:`foo` method.
+
+    Here is a command handler that says hello when it receives "!hello" in public::
 
         class HelloCommand(CommandHandler):
             triggers = {

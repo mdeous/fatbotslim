@@ -24,8 +24,8 @@ Usage
    usage/tutorials
    usage/handlers
 
-Reference
-=========
+API Reference
+=============
 
 .. toctree::
    :maxdepth: 2

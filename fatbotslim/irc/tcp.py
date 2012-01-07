@@ -34,7 +34,7 @@ log = create_logger(__name__)
 
 class TCP(object):
     """
-    Wraps a TCP connection.
+    A TCP connection.
     """
     def __init__(self, host, port, timeout=300):
         """

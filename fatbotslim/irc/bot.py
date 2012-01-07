@@ -138,7 +138,7 @@ class Source(object):
 
 class IRC(object):
     """
-    Provides a basic interface to an IRC server.
+    The main IRC bot class.
     """
     quit_msg = "I'll be back!"
     default_handlers = {
@@ -149,7 +149,17 @@ class IRC(object):
 
     def __init__(self, settings):
         """
-        :param settings: bot and target server configuration.
+        The only expected argument is the bot's configuration,
+        it should be a :class:`dict` with at least the following keys defined:
+
+        * server: the ircd's host (:class:`str`)
+        * port: the ircd's port (:class:`int`)
+        * ssl: connect to the server using SSL (:class:`bool`)
+        * channels: the channels to join upon connection (:class:`list`)
+        * nick: the bot's nickname (:class:`str`)
+        * realname: the bot's real name (:class:`str`)
+
+        :param settings: bot configuration.
         :type settings: dict
         """
         self.server = settings['server']

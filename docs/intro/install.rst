@@ -7,23 +7,23 @@ This document describes the various ways to install FatBotSlim.
 Using pip
 =========
 
-From GitHub:
-------------
+From GitHub
+-----------
 
 Just run::
 
     pip install git+git://github.com/mattoufoutu/fatbotslim.git
 
-From PyPI:
-----------
+From PyPI
+---------
 
 # TODO
 
 Manually
 ========
 
-From GitHub:
-------------
+From GitHub
+-----------
 
 1. Clone the repository::
 
@@ -34,7 +34,7 @@ From GitHub:
     cd fatbotslim
     python setup.py install
 
-From PyPI:
-----------
+From PyPI
+---------
 
 # TODO

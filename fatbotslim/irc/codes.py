@@ -21,6 +21,38 @@
 .. moduleauthor:: Mathieu D. (MatToufoutu)
 
 This module lists the known IRC codes as defined in the :rfc:`1459#section-6`.
+
+---
+
+It also defines some custom codes:
+
+**RPL_CONNECTED** (``001``): Connection established with the server.
+
+**RPL_SERVERVERSION** (``002``): Server's name/version.
+
+**RPL_SERVERCREATED** (``003``): Server's creation date.
+
+**RPL_SERVERMODES** (``004``): Modes supported by the server.
+
+**RPL_ISUPPORT** (``005``): Protocol extensions supported by the server.
+
+**CTCP_VERSION**, **CTCP_PING**, **CTCP_TIME**, **CTCP_SOURCE**: self-explanatory.
+
+**PING**, **PRIVMSG**, **NOTICE**, **JOIN**, **PART**: self-explanatory.
+
+---
+
+Codes are also grouped by type to make matching them easier:
+
+**ERRORS**, **RESPONSES**, **RESERVED**, **CTCP**, **OTHERS**
+
+---
+
+There are also 2 special code sets:
+
+**ALL_CODES**: Matches any code if listed in the groups previously mentionned.
+
+**UNKNOWN_CODE**: Matches any code not listed in ``ALL_CODES``.
 """
 
 # Error replies.

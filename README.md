@@ -23,7 +23,7 @@ Using the `fatbotslim.cli` helpers also gives your bot an integrated command lin
 arguments parser.
 
 For more detailed informations about writing custom handlers and more complex bots,
-please refer to the documentation (work in progress, look at the docstrings for now).
+please refer to the [documentation](http://fatbotslim.rtfd.org).
 
 ```python
 from fatbotslim.cli import make_bot, main
@@ -33,7 +33,7 @@ class HelloCommand(CommandHandler):
     triggers = {
         'hello': ('public',),
     }
-    
+
     def hello(self, msg, irc):
         irc.msg(msg.dst, "Hello {0}!".format(msg.src.name))
 

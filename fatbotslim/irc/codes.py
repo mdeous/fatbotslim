@@ -20,9 +20,7 @@
 
 .. moduleauthor:: Mathieu D. (MatToufoutu)
 
-This module lists the known IRC codes as defined in the `RFC`_.
-
-.. _RFC: http://www.irchelp.org/irchelp/rfc/chapter6.html
+This module lists the known IRC codes as defined in the :rfc:`1459#section-6`.
 """
 
 # Error replies.

@@ -34,7 +34,7 @@ class BaseHandler(object):
     """
     The base of every handler.
 
-    A handler should at least have a :attr:`commands` attribute of type `dict` which
+    A handler should at least have a :attr:`commands` attribute of type :class:`dict` which
     maps IRC codes (as defined in :mod:`fatbotslim.irc.codes`) to methods.
 
     Mapped methods take 2 arguments, the :class:`fatbotslim.irc.bot.Message` object
@@ -102,21 +102,21 @@ class UnknownCodeHandler(BaseHandler):
 class CommandHandler(BaseHandler):
     """
     The CommandHandler is a special kind of handler that eases the creation of
-    bots that react to prefixed commands (like "!command"). It only reacts to
+    bots that react to prefixed commands (like ``!command``). It only reacts to
     PRIVMSG and NOTICE messages.
 
     The prefix character is defined by the handler's :attr:`trigger_char` attribute,
-    and defaults to '!'.
+    and defaults to ``!``.
 
     Commands are defined in the handler's :attr:`triggers` attribute, a dict that
     maps method names to events to which they should react. Possible events
-    are 'public', 'private', and 'notice'. The methods should take 2 arguments,
+    are ``public``, ``private``, and ``notice``. The methods should take 2 arguments,
     the first is a :class:`fatbotslim.irc.bot.Message` object, and the second is a
     :class:`fatbotslim.irc.bot.IRC` object used to send messages back to the server.
 
-    For example, the message "!foo bar" would call the handler's :func:`foo` method.
+    For example, the message ``!foo bar`` would call the handler's :func:`foo` method.
 
-    Here is a command handler that says hello when it receives "!hello" in public::
+    Here is a command handler that says hello when it receives ``!hello`` in public::
 
         class HelloCommand(CommandHandler):
             triggers = {

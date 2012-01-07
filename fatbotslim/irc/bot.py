@@ -100,7 +100,7 @@ class Source(object):
     """
     def __init__(self, prefix):
         """
-        :param prefix: raw prefix with format "<servername>|<nick>['!'<user>]['@'<host>]".
+        :param prefix: raw prefix with format ``<servername>|<nick>['!'<user>]['@'<host>]``.
         :type prefix: str
         """
         self._raw = prefix
@@ -116,7 +116,7 @@ class Source(object):
         """
         Extracts informations from `prefix`.
 
-        :param prefix: raw prefix with format "<servername>|<nick>['!'<user>]['@'<host>]".
+        :param prefix: raw prefix with format ``<servername>|<nick>['!'<user>]['@'<host>]``.
         :type prefix: str
         :return: extracted informations (nickname or host, mode, username, host).
         :rtype: tuple(str, str, str, str)
@@ -196,7 +196,7 @@ class IRC(object):
     def _event_loop(self):
         """
         The main event loop.
-        Data from the server is parsed here using `_parse_msg`.
+        Data from the server is parsed here using :func:`_parse_msg`.
         Parsed events are put in the object's event queue (`self.events`).
         """
         while True:

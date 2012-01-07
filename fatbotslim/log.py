@@ -41,8 +41,8 @@ class ColorFormatter(logging.Formatter):
 
     def format(self, record):
         """
-        Overrides the default :method:`logging.Formatter.format` to add
-        colors to `record`'s `levelname` and `name` attributes.
+        Overrides the default :func:`logging.Formatter.format` to add colors to
+        the :obj:`record`'s :attr:`levelname` and :attr:`name` attributes.
         """
         level_length = len(record.levelname)
         if record.levelname in self._colors_map:
@@ -66,7 +66,7 @@ def create_logger(name, level='INFO'):
     :param name: new logger's name
     :type name: str
     :param level: default logging level.
-    :type level: str or int
+    :type level: :class:`str` or :class:`int`
     :return: new logger.
     :rtype: :class:`logging.Logger`
     """

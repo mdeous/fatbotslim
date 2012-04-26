@@ -1,3 +1,5 @@
+[![Flattr this repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=mattoufoutu&url=https://github.com/mattoufoutu/fatbotslim&title=fatbotslim&language=&tags=github&category=software)
+
 ## FatBotSlim
 
 Just another Python IRC bot library...

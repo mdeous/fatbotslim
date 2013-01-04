@@ -89,7 +89,7 @@ class Message(object):
             dst = args.pop(0)
             if ctcp_re.match(args[0]):
                 args = args[0].strip('\x01').split()
-                command = 'CTCP_'+args.pop(0)
+                command = 'CTCP_' + args.pop(0)
         return Source(src), dst, command, args
 
 
@@ -200,7 +200,7 @@ class IRC(object):
         :param command: line to send.
         :type command: str
         """
-        self.log.debug('-> '+command)
+        self.log.debug('-> ' + command)
         self.conn.oqueue.put(command)
 
     def _event_loop(self):
@@ -211,14 +211,15 @@ class IRC(object):
         """
         while True:
             line = self.conn.iqueue.get()
-            self.log.debug('<- '+line)
+            self.log.debug('<- ' + line)
             try:
                 message = Message(line)
             except ValueError:
-                self.log.error("Received a line that can't be parsed:%(linesep)s" \
+                self.log.error("Received a line that can't be parsed:%(linesep)s"
                                "%(line)s%(linesep)s%(exception)s" % dict(
-                    linesep=linesep, line=line, exception=format_exc()
-                ))
+                                linesep=linesep, line=line, exception=format_exc()
+                                )
+                )
                 continue
             if message.command == ERR_NICKNAMEINUSE:
                 self.set_nick(IRC.randomize_nick(self.nick))

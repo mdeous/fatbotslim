@@ -7,18 +7,17 @@ from fatbotslim import NAME, VERSION, AUTHOR
 
 CURRENT_DIR = os.path.dirname(__file__)
 
-
 setup(
-    name = NAME,
-    version = VERSION,
-    description = 'Yet another IRC bot library',
-    long_description = open(os.path.join(CURRENT_DIR, 'README.md')).read().strip(),
-    author = AUTHOR,
-    author_email = 'mattoufootu@gmail.com',
-    url = 'https://github.com/mattoufoutu/fatbotslim',
-    license = 'GPL',
-    keywords = 'irc ircbot bot',
-    classifiers = [
+    name=NAME,
+    version=VERSION,
+    description='Yet another IRC bot library',
+    long_description=open(os.path.join(CURRENT_DIR, 'README.md')).read().strip(),
+    author=AUTHOR,
+    author_email='mattoufootu@gmail.com',
+    url='https://github.com/mattoufoutu/fatbotslim',
+    license='GPL',
+    keywords='irc ircbot bot',
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Environment :: Plugins',
@@ -29,8 +28,8 @@ setup(
         'Topic :: Communications :: Chat :: Internet Relay Chat',
         'Topic :: Internet',
     ],
-    packages = find_packages(),
-    include_package_data = True,
-    zip_safe = False,
-    install_requires = open(os.path.join(CURRENT_DIR, 'requirements.txt')).read().strip(),
+    packages=find_packages(),
+    include_package_data=True,
+    zip_safe=False,
+    install_requires=open(os.path.join(CURRENT_DIR, 'requirements.txt')).read().strip(),
 )

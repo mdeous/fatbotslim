@@ -38,6 +38,6 @@ class HelloCommand(CommandHandler):
         irc.msg(msg.dst, "Hello {0}!".format(msg.src.name))
 
 
-bot = make_bot() # create a bot instance
-bot.add_handler(HelloCommand()) # register as many handlers as needed
-main(lambda: bot) # start the bot
+bot = make_bot()  # create a bot instance
+bot.add_handler(HelloCommand())  # register as many handlers as needed
+main(lambda: bot)  # start the bot

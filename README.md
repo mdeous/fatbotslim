@@ -16,7 +16,18 @@ Just another Python IRC bot library...
 
 - gevent
 
-## Example
+### Documentation:
+
+The documentation is hosted on [readthedocs](http://readthedocs.org) and is available
+in the following formats:
+
+- [HTML (online)](http:/fatbotslim.rtfd.org)
+- [HTML (downloadable .zip)](https://media.readthedocs.org/htmlzip/fatbotslim/latest/fatbotslim.zip)
+- [PDF](https://media.readthedocs.org/pdf/fatbotslim/latest/fatbotslim.pdf)
+- [Epub](https://media.readthedocs.org/epub/fatbotslim/latest/fatbotslim.epub)
+- [Manpage](https://media.readthedocs.org/man/fatbotslim/latest/fatbotslim.1)
+
+### Example:
 
 This very simple bot answers `Hello <username>!` when someone says `!hello` in a
 public message.

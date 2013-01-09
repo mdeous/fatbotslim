@@ -394,5 +394,3 @@ class UnknownCode(object):
     def __ne__(self, other):
         return other in self.known_codes
 UNKNOWN_CODE = UnknownCode(ALL_CODES)
-
-import multiprocessing.pool

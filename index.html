@@ -1,42 +1,36 @@
-<!doctype html>
-<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
-<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 
-  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
-  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="javascripts/script.js"></script>
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-  <title>FatBotSlim</title>
-  <meta name="description" content="Yet another IRC bot library.">
+    <title>FatBotSlim by mattoufoutu</title>
+  </head>
 
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-
-</head>
-
-<body>
-
-  <div class="wrapper">
+  <body>
     <header>
-      <h1 class="title">FatBotSlim</h1>
+      <div class="inner">
+        <h1>FatBotSlim</h1>
+        <h2>Yet another IRC bot library.</h2>
+        <a href="https://github.com/mattoufoutu/fatbotslim" class="button"><small>View project on</small>GitHub</a>
+      </div>
     </header>
-    <div id="container">
-      <p class="tagline">Yet another IRC bot library.</p>
-      <div id="main" role="main">
-        <div class="download-bar">
-        <div class="inner">
-          <a href="https://github.com/mattoufoutu/fatbotslim/tarball/master" class="download-button tar"><span>Download</span></a>
-          <a href="https://github.com/mattoufoutu/fatbotslim/zipball/master" class="download-button zip"><span>Download</span></a>
-          <a href="https://github.com/mattoufoutu/fatbotslim" class="code">View FatBotSlim on GitHub</a>
-        </div>
-        <span class="blc"></span><span class="trc"></span>
-        </div>
-        <article class="markdown-body">
-          <h3>Features:</h3>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <p><a href="https://flattr.com/submit/auto?user_id=mattoufoutu&amp;url=https://github.com/mattoufoutu/fatbotslim&amp;title=fatbotslim&amp;language=&amp;tags=github&amp;category=software"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this repo"></a></p>
+
+<h3>Features:</h3>
 
 <ul>
 <li>asynchronous</li>
@@ -48,7 +42,18 @@
 
 <ul>
 <li>gevent</li>
-</ul><h2>Example</h2>
+</ul><h3>Documentation:</h3>
+
+<p>The documentation is hosted on <a href="http://readthedocs.org">readthedocs</a> and is available
+in the following formats:</p>
+
+<ul>
+<li><a href="http:/fatbotslim.rtfd.org">HTML (online)</a></li>
+<li><a href="https://media.readthedocs.org/htmlzip/fatbotslim/latest/fatbotslim.zip">HTML (downloadable .zip)</a></li>
+<li><a href="https://media.readthedocs.org/pdf/fatbotslim/latest/fatbotslim.pdf">PDF</a></li>
+<li><a href="https://media.readthedocs.org/epub/fatbotslim/latest/fatbotslim.epub">Epub</a></li>
+<li><a href="https://media.readthedocs.org/man/fatbotslim/latest/fatbotslim.1">Manpage</a></li>
+</ul><h3>Example:</h3>
 
 <p>This very simple bot answers <code>Hello &lt;username&gt;!</code> when someone says <code>!hello</code> in a
 public message.</p>
@@ -59,8 +64,7 @@ arguments parser.</p>
 <p>For more detailed informations about writing custom handlers and more complex bots,
 please refer to the <a href="http://fatbotslim.rtfd.org">documentation</a>.</p>
 
-<div class="highlight">
-<pre><span class="kn">from</span> <span class="nn">fatbotslim.cli</span> <span class="kn">import</span> <span class="n">make_bot</span><span class="p">,</span> <span class="n">main</span>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">fatbotslim.cli</span> <span class="kn">import</span> <span class="n">make_bot</span><span class="p">,</span> <span class="n">main</span>
 <span class="kn">from</span> <span class="nn">fatbotslim.handlers</span> <span class="kn">import</span> <span class="n">CommandHandler</span>
 
 <span class="k">class</span> <span class="nc">HelloCommand</span><span class="p">(</span><span class="n">CommandHandler</span><span class="p">):</span>
@@ -74,29 +78,28 @@ please refer to the <a href="http://fatbotslim.rtfd.org">documentation</a>.</p>
 <span class="n">bot</span> <span class="o">=</span> <span class="n">make_bot</span><span class="p">()</span>
 <span class="n">bot</span><span class="o">.</span><span class="n">add_handler</span><span class="p">(</span><span class="n">HelloCommand</span><span class="p">())</span>
 <span class="n">main</span><span class="p">(</span><span class="n">bot</span><span class="p">)</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p><em>Just try it!</em></p>
-        </article>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/mattoufoutu/fatbotslim/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/mattoufoutu/fatbotslim/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/mattoufoutu/fatbotslim"></a> is maintained by <a href="https://github.com/mattoufoutu">mattoufoutu</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
       </div>
     </div>
-    <footer>
-      <div class="owner">
-      <p><a href="https://github.com/mattoufoutu" class="avatar"><img src="https://secure.gravatar.com/avatar/e82816a51578772c55dae3470c822ff2?s=30&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="48" height="48"/></a> <a href="https://github.com/mattoufoutu">mattoufoutu</a> maintains <a href="https://github.com/mattoufoutu/fatbotslim">FatBotSlim</a></p>
-      </div>
-      <div class="creds">
-        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br/>theme by <a href="http://twitter.com/jonrohan/">Jon Rohan</a></small>
-      </div>
-    </footer>
-  </div>
-  <div class="current-section">
-    <a href="#top">Scroll to top</a>
-    <a href="https://github.com/mattoufoutu/fatbotslim/tarball/master" class="tar">tar</a><a href="https://github.com/mattoufoutu/fatbotslim/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
-    <p class="name"></p>
-  </div>
 
   
-</body>
+  </body>
 </html>

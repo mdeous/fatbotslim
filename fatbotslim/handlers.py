@@ -34,14 +34,15 @@ class BaseHandler(object):
     """
     The base of every handler.
 
-    A handler should at least have a :attr:`commands` attribute of type :class:`dict` which
-    maps IRC codes (as defined in :mod:`fatbotslim.irc.codes`) to methods.
+    A handler should at least have a :attr:`commands` attribute of type :class:`dict`
+    which maps IRC codes (as defined in :mod:`fatbotslim.irc.codes`) to methods.
 
     Mapped methods take 2 arguments, the :class:`fatbotslim.irc.bot.Message` object
     that triggered the event, and a :class:`fatbotslim.irc.bot.IRC` instance, which
     can be used to send messages back to the server.
     """
     commands = {}
+
 
 class CTCPHandler(BaseHandler):
     """

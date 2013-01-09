@@ -93,6 +93,7 @@ def make_parser():
     )
     return parser
 
+
 def make_bot():
     """
     Creates a new bot instance ready to be launched.
@@ -109,6 +110,7 @@ def make_bot():
         'loglevel': args.log,
     }
     return IRC(settings)
+
 
 def main(bot_factory=make_bot):
     """

@@ -48,6 +48,7 @@ class Message(object):
     """
     Holds informations about a line received from the server.
     """
+
     def __init__(self, data):
         """
         :param data: line received from the server.
@@ -98,9 +99,10 @@ class Source(object):
     Holds informations about a message sender.
 
     """
+
     def __init__(self, prefix):
         """
-        :param prefix: raw prefix with format ``<servername>|<nick>['!'<user>]['@'<host>]``.
+        :param prefix: prefix with format ``<servername>|<nick>['!'<user>]['@'<host>]``.
         :type prefix: str
         """
         self._raw = prefix
@@ -116,7 +118,7 @@ class Source(object):
         """
         Extracts informations from `prefix`.
 
-        :param prefix: raw prefix with format ``<servername>|<nick>['!'<user>]['@'<host>]``.
+        :param prefix: prefix with format ``<servername>|<nick>['!'<user>]['@'<host>]``.
         :type prefix: str
         :return: extracted informations (nickname or host, mode, username, host).
         :rtype: tuple(str, str, str, str)
@@ -215,10 +217,11 @@ class IRC(object):
             try:
                 message = Message(line)
             except ValueError:
-                self.log.error("Received a line that can't be parsed:%(linesep)s"
-                               "%(line)s%(linesep)s%(exception)s" % dict(
-                                linesep=linesep, line=line, exception=format_exc()
-                                )
+                self.log.error(
+                    "Received a line that can't be parsed:%(linesep)s"
+                    "%(line)s%(linesep)s%(exception)s" % dict(
+                        linesep=linesep, line=line, exception=format_exc()
+                    )
                 )
                 continue
             if message.command == ERR_NICKNAMEINUSE:

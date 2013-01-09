@@ -100,7 +100,7 @@ ERR_CANTKILLSERVER = '483'
 ERR_NOOPERHOST = '491'
 ERR_UMODEUNKNOWNFLAG = '501'
 ERR_USERSDONTMATCH = '502'
-ERRORS = [
+ERRORS = set([
     ERR_NOSUCHNICK,
     ERR_NOSUCHSERVER,
     ERR_NOSUCHCHANNEL,
@@ -145,7 +145,7 @@ ERRORS = [
     ERR_NOOPERHOST,
     ERR_UMODEUNKNOWNFLAG,
     ERR_USERSDONTMATCH,
-]
+])
 
 # Command responses.
 RPL_CONNECTED = '001'
@@ -230,7 +230,7 @@ RPL_ADMINME = '256'
 RPL_ADMINLOC1 = '257'
 RPL_ADMINLOC2 = '258'
 RPL_ADMINEMAIL = '259'
-RESPONSES = {
+RESPONSES = set([
     RPL_CONNECTED,
     RPL_SERVERVERSION,
     RPL_SERVERCREATED,
@@ -313,7 +313,7 @@ RESPONSES = {
     RPL_ADMINLOC1,
     RPL_ADMINLOC2,
     RPL_ADMINEMAIL,
-}
+])
 
 # Reserved numerics.
 # These numerics are not described above since they fall into one of the following categories:
@@ -336,7 +336,7 @@ RPL_MYPORTIS = '384'
 ERR_BADCHANMASK = '476'
 ERR_YOUWILLBEBANNED = '466'
 ERR_NOSERVICEHOST = '492'
-RESERVED = {
+RESERVED = set([
     RPL_TRACECLASS,
     RPL_SERVICEINFO,
     RPL_SERVICE,
@@ -353,19 +353,19 @@ RESERVED = {
     ERR_BADCHANMASK,
     ERR_YOUWILLBEBANNED,
     ERR_NOSERVICEHOST,
-}
+])
 
 # CTCP codes (these are not in the RFC)
 CTCP_VERSION = 'CTCP_VERSION'
 CTCP_PING = 'CTCP_PING'
 CTCP_TIME = 'CTCP_TIME'
 CTCP_SOURCE = 'CTCP_SOURCE'
-CTCP = {
+CTCP = set([
     CTCP_VERSION,
     CTCP_PING,
     CTCP_TIME,
     CTCP_SOURCE,
-}
+])
 
 # Others:
 PRIVMSG = 'PRIVMSG'
@@ -373,13 +373,13 @@ PING = 'PING'
 NOTICE = 'NOTICE'
 JOIN = 'JOIN'
 PART = 'PART'
-OTHERS = {
+OTHERS = set([
     PRIVMSG,
     PING,
     NOTICE,
     JOIN,
     PART,
-}
+])
 
 ALL_CODES = ERRORS | RESPONSES | RESERVED | CTCP | OTHERS
 
@@ -394,3 +394,5 @@ class UnknownCode(object):
     def __ne__(self, other):
         return other in self.known_codes
 UNKNOWN_CODE = UnknownCode(ALL_CODES)
+
+import multiprocessing.pool

@@ -40,4 +40,4 @@ class HelloCommand(CommandHandler):
 
 bot = make_bot()  # create a bot instance
 bot.add_handler(HelloCommand())  # register as many handlers as needed
-main(lambda: bot)  # start the bot
+main(bot)  # start the bot

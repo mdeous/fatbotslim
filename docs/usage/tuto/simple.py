@@ -11,4 +11,4 @@ class HelloCommand(CommandHandler):
 
 bot = make_bot()
 bot.add_handler(HelloCommand())
-main(lambda: bot)
+main(bot)

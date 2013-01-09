@@ -70,6 +70,7 @@ Starting the bot:
 
 * Line 14:
 
-    The bot is launched in a greenlet, and the main loop is started.
+    The bot is passed to the :func:`fatbotslim.cli.main` function, which will take care
+    of
 
 .. _documentation: http://www.gevent.org/gevent.html#greenlet-objects

@@ -3,7 +3,7 @@ Tutorials
 =========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    tuto/simple
    tuto/multiserv

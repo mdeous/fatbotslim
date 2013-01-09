@@ -45,4 +45,4 @@ test.py
 *.ipynb
 *.db
 test.py
-doc/_build
+docs/_build

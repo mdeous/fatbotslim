@@ -29,6 +29,15 @@ from datetime import datetime
 from fatbotslim import NAME, VERSION
 from fatbotslim.irc.codes import *
 
+EVT_PUBLIC = 'public'
+EVT_PRIVATE = 'private'
+EVT_NOTICE = 'notice'
+EVT_ALL = (
+    EVT_PUBLIC,
+    EVT_PRIVATE,
+    EVT_NOTICE
+)
+
 
 class HandlerError(Exception):
     pass
@@ -49,8 +58,9 @@ class BaseHandler(object):
 
     def __init__(self, irc):
         self.irc = irc
-        for _, method_name in self.commands:
-            if not hasattr(self, method_name):
+        for _, method_name in self.commands.iteritems():
+            method = getattr(self, method_name)
+            if not callable(method):
                 raise HandlerError(
                     '%s has no method named %s' % (
                         self.__class__.__name__, method_name
@@ -152,6 +162,20 @@ class CommandHandler(BaseHandler):
     trigger_char = '!'
     triggers = {}
 
+    def __init__(self, irc):
+        super(CommandHandler, self).__init__(irc)
+        for trigger, events in self.triggers.iteritems():
+            method = getattr(self, trigger)
+            if not callable(method):
+                raise HandlerError(
+                    '%s has no method named %s' % (
+                        self.__class__.__name__, trigger
+                    )
+                )
+            for event in events:
+                if event not in EVT_ALL:
+                    raise HandlerError('Unknown event type: %s' % event)
+
     def _dispatch_trigger(self, msg):
         """
         Dispatches the message to the corresponding method.
@@ -161,18 +185,14 @@ class CommandHandler(BaseHandler):
         split_args = msg.args[0].split()
         trigger = split_args[0].lstrip(self.trigger_char)
         msg.args = split_args[1:]
-        if hasattr(self, trigger):
+        if trigger in self.triggers:
             method = getattr(self, trigger)
-            # check if the method is present and registered in the triggers
-            if callable(method) and (trigger in self.triggers):
-                if msg.command == PRIVMSG:
-                    if msg.dst == self.irc.nick:
-                        if 'private' in self.triggers[trigger]:
-                            method(msg)
-                    else:
-                        if 'public' in self.triggers[trigger]:
-                            method(msg)
-                        pass
-                elif (msg.command == NOTICE) and ('notice' in self.triggers[trigger]):
-                    if 'notice' in self.triggers[trigger]:
+            if msg.command == PRIVMSG:
+                if msg.dst == self.irc.nick:
+                    if EVT_PRIVATE in self.triggers[trigger]:
                         method(msg)
+                else:
+                    if EVT_PUBLIC in self.triggers[trigger]:
+                        method(msg)
+            elif (msg.command == NOTICE) and (EVT_NOTICE in self.triggers[trigger]):
+                    method(msg)

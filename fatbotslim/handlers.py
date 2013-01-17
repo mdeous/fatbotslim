@@ -132,11 +132,11 @@ class CommandHandler(BaseHandler):
 
     def __init__(self):
         self.commands = {
-            PRIVMSG: self._dispatch,
-            NOTICE: self._dispatch
+            PRIVMSG: self._dispatch_trigger,
+            NOTICE: self._dispatch_trigger
         }
 
-    def _dispatch(self, msg, irc):
+    def _dispatch_trigger(self, msg, irc):
         """
         Dispatches the message to the corresponding method.
         """

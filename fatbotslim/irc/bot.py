@@ -144,9 +144,9 @@ class IRC(object):
     """
     quit_msg = "I'll be back!"
     default_handlers = {
-        CTCPHandler(),
-        PingHandler(),
-        UnknownCodeHandler(),
+        CTCPHandler,
+        PingHandler,
+        UnknownCodeHandler,
     }
 
     def __init__(self, settings):
@@ -174,7 +174,7 @@ class IRC(object):
         self._handlers = set()
         self.log = create_logger(__name__, level=settings.get('loglevel', 'INFO'))
         for handler in self.default_handlers:
-            self.add_handler(handler)
+            self.add_handler(handler(self))
 
     def _create_connection(self):
         """
@@ -241,7 +241,7 @@ class IRC(object):
         for handler in self._handlers:
             for command in handler.commands:
                 if command == msg.command:
-                    self._pool.spawn(handler.commands[command], msg, self)
+                    self._pool.spawn(handler.commands[command], msg)
 
     @classmethod
     def randomize_nick(cls, base, suffix_length=3):

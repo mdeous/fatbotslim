@@ -30,6 +30,10 @@ from fatbotslim import NAME, VERSION
 from fatbotslim.irc.codes import *
 
 
+class HandlerError(Exception):
+    pass
+
+
 class BaseHandler(object):
     """
     The base of every handler.
@@ -43,61 +47,75 @@ class BaseHandler(object):
     """
     commands = {}
 
+    def __init__(self, irc):
+        self.irc = irc
+        for _, method_name in self.commands:
+            if not hasattr(self, method_name):
+                raise HandlerError(
+                    '%s has no method named %s' % (
+                        self.__class__.__name__, method_name
+                    )
+                )
+
+    def _dispatch_command(self, msg):
+        method = getattr(self, self.commands[msg.command])
+        method(msg)
+
 
 class CTCPHandler(BaseHandler):
     """
     Reacts to CTCP events (VERSION,SOURCE,TIME,PING). (enabled by default)
     """
-    def __init__(self):
-        self.commands = {
-            CTCP_VERSION: self.version,
-            CTCP_SOURCE: self.source,
-            CTCP_TIME: self.time,
-            CTCP_PING: self.ping,
-        }
+    commands = {
+        CTCP_VERSION: 'version',
+        CTCP_SOURCE: 'source',
+        CTCP_TIME: 'time',
+        CTCP_PING: 'ping'
+    }
 
-    def version(self, msg, irc):
-        irc.ctcp_reply('VERSION', msg.src.name, '{0}:{1}:{2}'.format(
-            NAME, VERSION, platform.system()
-        ))
+    def version(self, msg):
+        self.irc.ctcp_reply(
+            'VERSION', msg.src.name,
+            '{0}:{1}:{2}'.format(NAME, VERSION, platform.system())
+        )
 
-    def source(self, msg, irc):
-        irc.ctcp_reply('SOURCE', msg.src.name,
-                       'https://github.com/mattoufoutu/fatbotslim')
-        irc.ctcp_reply('SOURCE', msg.src.name)
+    def source(self, msg):
+        self.irc.ctcp_reply(
+            'SOURCE', msg.src.name,
+            'https://github.com/mattoufoutu/fatbotslim'
+        )
+        self.irc.ctcp_reply('SOURCE', msg.src.name)
 
-    def time(self, msg, irc):
+    def time(self, msg):
         now = datetime.now().strftime('%a %b %d %I:%M:%S%p %Y %Z').strip()
-        irc.ctcp_reply('TIME', msg.src.name, now)
+        self.irc.ctcp_reply('TIME', msg.src.name, now)
 
-    def ping(self, msg, irc):
-        irc.ctcp_reply('PING', msg.src.name, msg.args[0])
+    def ping(self, msg):
+        self.irc.ctcp_reply('PING', msg.src.name, msg.args[0])
 
 
 class PingHandler(BaseHandler):
     """
     Answers to PINGs sent by the server. (enabled by default)
     """
-    def __init__(self):
-        self.commands = {
-            PING: self.ping,
-        }
+    commands = {
+        PING: 'ping'
+    }
 
-    def ping(self, msg, irc):
-        irc.cmd('PONG', msg.args)
+    def ping(self, msg):
+        self.irc.cmd('PONG', msg.args)
 
 
 class UnknownCodeHandler(BaseHandler):
     """
     Logs messages for which the IRC code is unknown. (enabled by default)
     """
-    def __init__(self):
-        self.commands = {
-            UNKNOWN_CODE: self.unknown_code,
-        }
+    commands = {
+        UNKNOWN_CODE: 'unknown_code'
+    }
 
-    def unknown_code(self, msg, irc):
-        irc.log.info("Received an unknown command: {0}".format(msg.command))
+    def unknown_code(self, msg):
+        self.irc.log.info("Received an unknown command: {0}".format(msg.command))
 
 
 class CommandHandler(BaseHandler):
@@ -123,20 +141,18 @@ class CommandHandler(BaseHandler):
             triggers = {
                 'hello': ('public',),
             }
-            def hello(self, msg, irc):
-                irc.msg(msg.dst, "Hello, {0}!".format(msg.src.name))
+            def hello(self, msg):
+                self.irc.msg(msg.dst, "Hello, {0}!".format(msg.src.name))
 
     """
+    commands = {
+        PRIVMSG: '_dispatch_trigger',
+        NOTICE: '_dispatch_trigger'
+    }
     trigger_char = '!'
     triggers = {}
 
-    def __init__(self):
-        self.commands = {
-            PRIVMSG: self._dispatch_trigger,
-            NOTICE: self._dispatch_trigger
-        }
-
-    def _dispatch_trigger(self, msg, irc):
+    def _dispatch_trigger(self, msg):
         """
         Dispatches the message to the corresponding method.
         """
@@ -150,13 +166,13 @@ class CommandHandler(BaseHandler):
             # check if the method is present and registered in the triggers
             if callable(method) and (trigger in self.triggers):
                 if msg.command == PRIVMSG:
-                    if msg.dst == irc.nick:
+                    if msg.dst == self.irc.nick:
                         if 'private' in self.triggers[trigger]:
-                            method(msg, irc)
+                            method(msg)
                     else:
                         if 'public' in self.triggers[trigger]:
-                            method(msg, irc)
+                            method(msg)
                         pass
                 elif (msg.command == NOTICE) and ('notice' in self.triggers[trigger]):
                     if 'notice' in self.triggers[trigger]:
-                        method(msg, irc)
+                        method(msg)

@@ -50,9 +50,8 @@ class BaseHandler(object):
     A handler should at least have a :attr:`commands` attribute of type :class:`dict`
     which maps IRC codes (as defined in :mod:`fatbotslim.irc.codes`) to methods.
 
-    Mapped methods take 2 arguments, the :class:`fatbotslim.irc.bot.Message` object
-    that triggered the event, and a :class:`fatbotslim.irc.bot.IRC` instance, which
-    can be used to send messages back to the server.
+    Mapped methods take 1 argument, the :class:`fatbotslim.irc.bot.Message` object
+    that triggered the event.
     """
     commands = {}
 
@@ -139,9 +138,9 @@ class CommandHandler(BaseHandler):
 
     Commands are defined in the handler's :attr:`triggers` attribute, a dict that
     maps method names to events to which they should react. Possible events
-    are ``public``, ``private``, and ``notice``. The methods should take 2 arguments,
-    the first is a :class:`fatbotslim.irc.bot.Message` object, and the second is a
-    :class:`fatbotslim.irc.bot.IRC` object used to send messages back to the server.
+    are :obj:`EVT_PUBLIC`, :obj:`EVT_PRIVATE`, and :obj:`EVT_NOTICE`.
+    The methods should take 1 argument, which is the :class:`fatbotslim.irc.bot.Message`
+    object  that triggered the event.
 
     For example, the message ``!foo bar`` would call the handler's :func:`foo` method.
 
@@ -149,7 +148,7 @@ class CommandHandler(BaseHandler):
 
         class HelloCommand(CommandHandler):
             triggers = {
-                'hello': ('public',),
+                'hello': [EVT_PUBLIC],
             }
             def hello(self, msg):
                 self.irc.msg(msg.dst, "Hello, {0}!".format(msg.src.name))

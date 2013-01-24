@@ -193,7 +193,7 @@ class IRC(object):
         self.conn = self._create_connection()
         spawn(self.conn.connect)
         self.set_nick(self.nick)
-        self.cmd('USER', (self.nick, ' 3 ', '* ', self.realname))
+        self.cmd('USER', [self.nick, ' 3 ', '* ', self.realname])
 
     def _send(self, command):
         """

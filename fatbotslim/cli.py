@@ -41,8 +41,8 @@ def make_parser():
     :rtype: :class:`argparse.ArgumentParser`
     """
     parser = ArgumentParser(
-            description='Start an IRC bot instance from the command line.',
-            formatter_class=ArgumentDefaultsHelpFormatter,
+        description='Start an IRC bot instance from the command line.',
+        formatter_class=ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
         '-v', '--version',

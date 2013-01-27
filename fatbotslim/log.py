@@ -25,6 +25,9 @@ This module contains everything useful to enable logging.
 
 import logging
 
+LOG_FORMAT = '%(levelname)s [%(name)s] %(asctime)s - %(message)s'
+DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+
 
 class ColorFormatter(logging.Formatter):
     """
@@ -70,10 +73,7 @@ def create_logger(name, level='INFO'):
     :return: new logger.
     :rtype: :class:`logging.Logger`
     """
-    formatter = ColorFormatter(
-        '%(levelname)s [%(name)s] %(asctime)s - %(message)s',
-        '%Y-%m-%d %H:%M:%S'
-    )
+    formatter = ColorFormatter(LOG_FORMAT, DATE_FORMAT)
     if not isinstance(logging.getLevelName(level), int):
         level = 'INFO'
     handler = logging.StreamHandler()

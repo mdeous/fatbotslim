@@ -174,7 +174,7 @@ class IRC(object):
         self._handlers = set()
         self.log = create_logger(__name__, level=settings.get('loglevel', 'INFO'))
         for handler in self.default_handlers:
-            self.add_handler(handler(self))
+            self.add_handler(handler)
 
     def _create_connection(self):
         """
@@ -193,7 +193,8 @@ class IRC(object):
         self.conn = self._create_connection()
         spawn(self.conn.connect)
         self.set_nick(self.nick)
-        self.cmd('USER', [self.nick, ' 3 ', '* ', self.realname])
+#        self.cmd('USER', [self.nick, ' 3 ', '* ', self.realname])
+        self.cmd('USER', '{0} 3 * {1}'.format(self.nick, self.realname))
 
     def _send(self, command):
         """
@@ -241,7 +242,9 @@ class IRC(object):
         for handler in self._handlers:
             for command in handler.commands:
                 if command == msg.command:
-                    self._pool.spawn(handler.commands[command], msg)
+                    method = getattr(handler, handler.commands[command])
+                    self._pool.spawn(method, msg)
+                    #self._pool.spawn(handler.commands[command], msg)
 
     @classmethod
     def randomize_nick(cls, base, suffix_length=3):
@@ -263,9 +266,9 @@ class IRC(object):
         Registers a new handler.
 
         :param handler: handler to register.
-        :type handler: object
+        :type handler: :class:``fatbotslim.handlers.BaseHandler`
         """
-        self._handlers.add(handler)
+        self._handlers.add(handler(self))
 
     def cmd(self, command, args, prefix=None):
         """
@@ -274,13 +277,13 @@ class IRC(object):
         :param command: IRC code to send.
         :type command: str
         :param args: arguments to pass with the command.
-        :type args: iterable
+        :type args: basestring
         :param prefix: optional prefix to prepend to the command.
         :type prefix: str or None
         """
         if prefix is None:
             prefix = ''
-        raw_cmd = '{0} {1} {2}'.format(prefix, command, ''.join(args)).strip()
+        raw_cmd = '{0} {1} {2}'.format(prefix, command, args).strip()
         self._send(raw_cmd)
 
     def ctcp_reply(self, command, dst, message=None):
@@ -309,7 +312,7 @@ class IRC(object):
         :param msg: message to send.
         :type msg: str
         """
-        self.cmd('PRIVMSG', ['{0} :{1}'.format(target, msg)])
+        self.cmd('PRIVMSG', '{0} :{1}'.format(target, msg))
 
     def notice(self, target, msg):
         """
@@ -320,7 +323,7 @@ class IRC(object):
         :param msg: message to send.
         :type msg: basestring
         """
-        self.cmd('NOTICE', ['{0} :{1}'.format(target, msg)])
+        self.cmd('NOTICE', '{0} :{1}'.format(target, msg))
 
     def join(self, channel):
         """
@@ -344,7 +347,7 @@ class IRC(object):
         """
         Disconnects the bot from the server.
         """
-        self.cmd('QUIT', [':{0}'.format(self.quit_msg)])
+        self.cmd('QUIT', ':{0}'.format(self.quit_msg))
 
     def run(self):
         """

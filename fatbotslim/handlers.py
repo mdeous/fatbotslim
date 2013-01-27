@@ -183,7 +183,6 @@ class CommandHandler(BaseHandler):
             return
         split_args = msg.args[0].split()
         trigger = split_args[0].lstrip(self.trigger_char)
-        msg.args = split_args[1:]
         if trigger in self.triggers:
             method = getattr(self, trigger)
             if msg.command == PRIVMSG:

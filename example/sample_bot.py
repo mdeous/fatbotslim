@@ -22,7 +22,7 @@ using FatBotSlim.
 """
 
 from fatbotslim.cli import make_bot, main
-from fatbotslim.handlers import CommandHandler
+from fatbotslim.handlers import CommandHandler, EVT_PUBLIC
 
 
 class HelloCommand(CommandHandler):
@@ -31,13 +31,13 @@ class HelloCommand(CommandHandler):
     when someone uses the "!hello" command (only in public messages).
     """
     triggers = {
-        'hello': ('public',),
+        'hello': [EVT_PUBLIC],
     }
 
-    def hello(self, msg, irc):
-        irc.msg(msg.dst, "Hello {0}!".format(msg.src.name))
+    def hello(self, msg):
+        self.irc.msg(msg.dst, "Hello {0}!".format(msg.src.name))
 
 
 bot = make_bot()  # create a bot instance
-bot.add_handler(HelloCommand())  # register as many handlers as needed
+bot.add_handler(HelloCommand)  # register as many handlers as needed
 main(bot)  # start the bot

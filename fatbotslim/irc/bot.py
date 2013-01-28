@@ -82,7 +82,7 @@ class Message(object):
         if ' :' in data:
             data, trailing = data.split(' :', 1)
             args = data.split()
-            args.append(trailing)
+            args.extend(trailing.split())
         else:
             args = data.split()
         command = args.pop(0)

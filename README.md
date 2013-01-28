@@ -51,7 +51,7 @@ class HelloCommand(CommandHandler):
         self.irc.msg(msg.dst, "Hello {0}!".format(msg.src.name))
 
 bot = make_bot()
-bot.add_handler(HelloCommand())
+bot.add_handler(HelloCommand)
 main(bot)
 ```
 

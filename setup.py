@@ -3,7 +3,7 @@
 
 import os.path
 from setuptools import setup, find_packages
-from fatbotslim import NAME, VERSION, AUTHOR
+from fatbotslim import NAME, VERSION, AUTHOR, URL
 
 CURRENT_DIR = os.path.dirname(__file__)
 
@@ -14,7 +14,7 @@ setup(
     long_description=open(os.path.join(CURRENT_DIR, 'README.md')).read().strip(),
     author=AUTHOR,
     author_email='mattoufootu@gmail.com',
-    url='https://github.com/mattoufoutu/fatbotslim',
+    url=URL,
     license='GPL',
     keywords='irc ircbot bot',
     classifiers=[

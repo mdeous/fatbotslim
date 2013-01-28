@@ -26,7 +26,7 @@ and allow creation of custom handlers.
 
 import platform
 from datetime import datetime
-from fatbotslim import NAME, VERSION
+from fatbotslim import NAME, VERSION, URL
 from fatbotslim.irc.codes import *
 
 EVT_PUBLIC = 'public'
@@ -91,7 +91,7 @@ class CTCPHandler(BaseHandler):
     def source(self, msg):
         self.irc.ctcp_reply(
             'SOURCE', msg.src.name,
-            'https://github.com/mattoufoutu/fatbotslim'
+            URL
         )
         self.irc.ctcp_reply('SOURCE', msg.src.name)
 

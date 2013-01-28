@@ -203,7 +203,7 @@ class IRC(object):
         :param command: line to send.
         :type command: str
         """
-        self.log.debug('-> ' + command)
+        self.log.debug('>> ' + command)
         self.conn.oqueue.put(command)
 
     def _event_loop(self):
@@ -214,7 +214,7 @@ class IRC(object):
         """
         while True:
             line = self.conn.iqueue.get()
-            self.log.debug('<- ' + line)
+            self.log.debug('<< ' + line)
             try:
                 message = Message(line)
             except ValueError:

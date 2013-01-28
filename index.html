@@ -30,7 +30,7 @@
         <section id="main-content">
           <p><a href="https://flattr.com/submit/auto?user_id=mattoufoutu&amp;url=https://github.com/mattoufoutu/fatbotslim&amp;title=fatbotslim&amp;language=&amp;tags=github&amp;category=software"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this repo"></a></p>
 
-<h3>Features</h3>
+<h3>Features:</h3>
 
 <ul>
 <li>asynchronous</li>
@@ -38,11 +38,11 @@
 <li>easy to use plugin system</li>
 <li>colored logging</li>
 <li>command line parser to set your custom bot settings from the console</li>
-</ul><h3>Dependencies</h3>
+</ul><h3>Dependencies:</h3>
 
 <ul>
 <li>gevent</li>
-</ul><h3>Documentation</h3>
+</ul><h3>Documentation:</h3>
 
 <p>The documentation is hosted on <a href="http://readthedocs.org">readthedocs</a> and is available
 in the following formats:</p>
@@ -53,7 +53,7 @@ in the following formats:</p>
 <li><a href="https://media.readthedocs.org/pdf/fatbotslim/latest/fatbotslim.pdf">PDF</a></li>
 <li><a href="https://media.readthedocs.org/epub/fatbotslim/latest/fatbotslim.epub">Epub</a></li>
 <li><a href="https://media.readthedocs.org/man/fatbotslim/latest/fatbotslim.1">Manpage</a></li>
-</ul><h3>Example</h3>
+</ul><h3>Example:</h3>
 
 <p>This very simple bot answers <code>Hello &lt;username&gt;!</code> when someone says <code>!hello</code> in a
 public message.</p>
@@ -76,7 +76,7 @@ please refer to the <a href="http://fatbotslim.rtfd.org">documentation</a>.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">irc</span><span class="o">.</span><span class="n">msg</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">dst</span><span class="p">,</span> <span class="s">"Hello {0}!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">src</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
 
 <span class="n">bot</span> <span class="o">=</span> <span class="n">make_bot</span><span class="p">()</span>
-<span class="n">bot</span><span class="o">.</span><span class="n">add_handler</span><span class="p">(</span><span class="n">HelloCommand</span><span class="p">())</span>
+<span class="n">bot</span><span class="o">.</span><span class="n">add_handler</span><span class="p">(</span><span class="n">HelloCommand</span><span class="p">)</span>
 <span class="n">main</span><span class="p">(</span><span class="n">bot</span><span class="p">)</span>
 </pre></div>
 

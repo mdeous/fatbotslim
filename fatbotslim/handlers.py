@@ -100,7 +100,7 @@ class CTCPHandler(BaseHandler):
         self.irc.ctcp_reply('TIME', msg.src.name, now)
 
     def ping(self, msg):
-        self.irc.ctcp_reply('PING', msg.src.name, msg.args[0])
+        self.irc.ctcp_reply('PING', msg.src.name, ' '.join(msg.args))
 
 
 class PingHandler(BaseHandler):
@@ -112,7 +112,7 @@ class PingHandler(BaseHandler):
     }
 
     def ping(self, msg):
-        self.irc.cmd('PONG', msg.args[0])
+        self.irc.cmd('PONG', ' '.join(msg.args))
 
 
 class UnknownCodeHandler(BaseHandler):

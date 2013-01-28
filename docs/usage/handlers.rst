@@ -46,7 +46,7 @@ A good example of a custom handler is FatBotSlim's integrated :class:`fatbotslim
             self.irc.ctcp_reply('TIME', msg.src.name, now)
 
         def ping(self, msg):
-            self.irc.ctcp_reply('PING', msg.src.name, msg.args[0])
+            self.irc.ctcp_reply('PING', msg.src.name, ' '.join(msg.args))
 
 Another, simpler, basic handler is the integrated :class:`fatbotslim.handlers.PingHandler`,
 this one simply answers to server's PINGs::
@@ -60,7 +60,7 @@ this one simply answers to server's PINGs::
         }
 
         def ping(self, msg):
-            self.irc.cmd('PONG', msg.args[0])
+            self.irc.cmd('PONG', ' '.join(msg.args))
 
 Command handlers
 ================

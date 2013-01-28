@@ -2,7 +2,7 @@
 
 ## FatBotSlim
 
-Just another Python IRC bot library...
+Yet another Python IRC bot library...
 
 ### Features:
 
@@ -40,15 +40,15 @@ please refer to the [documentation](http://fatbotslim.rtfd.org).
 
 ```python
 from fatbotslim.cli import make_bot, main
-from fatbotslim.handlers import CommandHandler
+from fatbotslim.handlers import CommandHandler, EVT_PUBLIC
 
 class HelloCommand(CommandHandler):
     triggers = {
-        'hello': ('public',),
+        'hello': [EVT_PUBLIC],
     }
 
-    def hello(self, msg, irc):
-        irc.msg(msg.dst, "Hello {0}!".format(msg.src.name))
+    def hello(self, msg):
+        self.irc.msg(msg.dst, "Hello {0}!".format(msg.src.name))
 
 bot = make_bot()
 bot.add_handler(HelloCommand())
@@ -56,3 +56,4 @@ main(bot)
 ```
 
 *Just try it!*
+

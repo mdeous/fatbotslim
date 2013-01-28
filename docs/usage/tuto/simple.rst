@@ -36,7 +36,8 @@ Imports:
 * Line 2:
 
     Here we import the :class:`fatbotslim.handlers.CommandHandler` that will be used
-    to make the bot react to the `!hello` command.
+    to make the bot react to the `!hello` command and the :attr:`EVT_PUBLIC` variable,
+    which is used to define
 
 The handler:
 ------------

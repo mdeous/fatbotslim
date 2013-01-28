@@ -49,7 +49,7 @@ A good example of a custom handler is FatBotSlim's integrated :class:`fatbotslim
             self.irc.ctcp_reply('PING', msg.src.name, msg.args[0])
 
 Another, simpler, basic handler is the integrated :class:`fatbotslim.handlers.PingHandler`,
-this one simply sends back the PING args in a PONG response::
+this one simply answers to server's PINGs::
 
     class PingHandler(BaseHandler):
         """
@@ -60,7 +60,7 @@ this one simply sends back the PING args in a PONG response::
         }
 
         def ping(self, msg):
-            self.irc.cmd('PONG', msg.args)
+            self.irc.cmd('PONG', msg.args[0])
 
 Command handlers
 ================

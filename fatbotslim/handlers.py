@@ -112,7 +112,7 @@ class PingHandler(BaseHandler):
     }
 
     def ping(self, msg):
-        self.irc.cmd('PONG', msg.args)
+        self.irc.cmd('PONG', msg.args[0])
 
 
 class UnknownCodeHandler(BaseHandler):

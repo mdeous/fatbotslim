@@ -384,6 +384,8 @@ OTHERS = set([
     NOTICE,
     JOIN,
     PART,
+    MODE,
+    KICK,
     QUIT,
 ])
 

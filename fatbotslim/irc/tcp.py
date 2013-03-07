@@ -27,6 +27,7 @@ from gevent import spawn, joinall, killall
 from gevent.queue import Queue
 from gevent.socket import socket
 from gevent.ssl import wrap_socket
+
 from fatbotslim.log import create_logger
 
 log = create_logger(__name__)
@@ -97,6 +98,7 @@ class TCP(object):
         """
         Connects the socket and spawns the send/receive loops.
         """
+        jobs = []
         self._socket.connect((self.host, self.port))
         try:
             jobs = [spawn(self._recv_loop), spawn(self._send_loop)]

@@ -26,6 +26,7 @@ and allow creation of custom handlers.
 
 import platform
 from datetime import datetime
+
 from fatbotslim import NAME, VERSION, URL
 from fatbotslim.irc.codes import *
 

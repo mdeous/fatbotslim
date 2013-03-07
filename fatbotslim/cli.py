@@ -24,7 +24,9 @@ This module contains utilities to run a bot from the command line.
 """
 
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+
 from gevent import spawn
+
 from fatbotslim import NAME, VERSION
 from fatbotslim.irc.bot import IRC
 from fatbotslim.log import create_logger
@@ -120,7 +122,7 @@ def main(bot):
     try:
         greenlet.join()
     except KeyboardInterrupt:
-        print '' # cosmetics matters
+        print ''  # cosmetics matters
         log.info("Killed by user, disconnecting...")
         bot.disconnect()
     finally:

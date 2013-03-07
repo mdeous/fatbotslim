@@ -27,8 +27,10 @@ import re
 from os import linesep
 from random import choice
 from traceback import format_exc
+
 from gevent import spawn, joinall, killall
 from gevent.pool import Group
+
 from fatbotslim.irc.codes import *
 from fatbotslim.irc.tcp import TCP, SSL
 from fatbotslim.handlers import CTCPHandler, PingHandler, UnknownCodeHandler

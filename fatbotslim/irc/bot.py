@@ -24,10 +24,9 @@ This module contains IRC protocol related stuff.
 """
 
 import re
-from os import linesep
 from random import choice
-from traceback import format_exc, format_exception_only
 
+import chardet
 from gevent import spawn, joinall, killall
 from gevent.pool import Group
 
@@ -147,7 +146,7 @@ class IRC(object):
     """
     The main IRC bot class.
     """
-    quit_msg = "I'll be back!"
+    quit_msg = u"I'll be back!"
     default_handlers = {
         CTCPHandler,
         PingHandler,
@@ -199,7 +198,7 @@ class IRC(object):
         spawn(self.conn.connect)
         self.set_nick(self.nick)
 #        self.cmd('USER', [self.nick, ' 3 ', '* ', self.realname])
-        self.cmd('USER', '{0} 3 * {1}'.format(self.nick, self.realname))
+        self.cmd(u'USER', u'{0} 3 * {1}'.format(self.nick, self.realname))
 
     def _send(self, command):
         """
@@ -208,6 +207,7 @@ class IRC(object):
         :param command: line to send.
         :type command: str
         """
+        command = command.encode('utf-8')
         self.log.debug('>> ' + command)
         self.conn.oqueue.put(command)
 
@@ -219,8 +219,12 @@ class IRC(object):
         """
         while True:
             orig_line = self.conn.iqueue.get()
-            line = orig_line.strip()
-            self.log.debug('<< ' + line)
+            self.log.debug('<< ' + orig_line)
+            line = unicode(
+                orig_line,
+                encoding=chardet.detect(orig_line)['encoding'],
+                errors='replace'
+            ).strip()
             err_msg = False
             try:
                 message = Message(line)
@@ -287,7 +291,7 @@ class IRC(object):
         """
         if prefix is None:
             prefix = ''
-        raw_cmd = '{0} {1} {2}'.format(prefix, command, args).strip()
+        raw_cmd = u'{0} {1} {2}'.format(prefix, command, args).strip()
         self._send(raw_cmd)
 
     def ctcp_reply(self, command, dst, message=None):
@@ -302,9 +306,9 @@ class IRC(object):
         :type message: str
         """
         if message is None:
-            raw_cmd = '\x01{0}\x01'.format(command)
+            raw_cmd = u'\x01{0}\x01'.format(command)
         else:
-            raw_cmd = '\x01{0} {1}\x01'.format(command, message)
+            raw_cmd = u'\x01{0} {1}\x01'.format(command, message)
         self.notice(dst, raw_cmd)
 
     def msg(self, target, msg):
@@ -316,7 +320,7 @@ class IRC(object):
         :param msg: message to send.
         :type msg: str
         """
-        self.cmd('PRIVMSG', '{0} :{1}'.format(target, msg))
+        self.cmd(u'PRIVMSG', u'{0} :{1}'.format(target, msg))
 
     def notice(self, target, msg):
         """
@@ -327,7 +331,7 @@ class IRC(object):
         :param msg: message to send.
         :type msg: basestring
         """
-        self.cmd('NOTICE', '{0} :{1}'.format(target, msg))
+        self.cmd(u'NOTICE', u'{0} :{1}'.format(target, msg))
 
     def join(self, channel):
         """
@@ -336,7 +340,7 @@ class IRC(object):
         :param channel: new channel to join.
         :type channel: str
         """
-        self.cmd('JOIN', channel)
+        self.cmd(u'JOIN', channel)
 
     def set_nick(self, nick):
         """
@@ -345,13 +349,13 @@ class IRC(object):
         :param nick: new nickname to use
         :type nick: str
         """
-        self.cmd('NICK', nick)
+        self.cmd(u'NICK', nick)
 
     def disconnect(self):
         """
         Disconnects the bot from the server.
         """
-        self.cmd('QUIT', ':{0}'.format(self.quit_msg))
+        self.cmd(u'QUIT', u':{0}'.format(self.quit_msg))
 
     def run(self):
         """

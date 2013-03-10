@@ -87,7 +87,7 @@ class TCP(object):
         while True:
             try:
                 line = self.oqueue.get().splitlines()[0][:500]
-                self._obuffer += line.encode('utf-8', 'replace') + '\r\n'
+                self._obuffer += line + '\r\n'
                 while self._obuffer:
                     sent = self._socket.send(self._obuffer)
                     self._obuffer = self._obuffer[sent:]

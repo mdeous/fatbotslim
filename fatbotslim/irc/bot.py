@@ -77,8 +77,6 @@ class Message(object):
         """
         src = ''
         dst = None
-        if not data:
-            raise NullMessage('Received an empty line from the server')
         if data[0] == ':':
             src, data = data[1:].split(' ', 1)
         if ' :' in data:
@@ -215,7 +213,10 @@ class IRC(object):
         Parsed events are put in the object's event queue (`self.events`).
         """
         while True:
-            line = self.conn.iqueue.get()
+            line = self.conn.iqueue.get().strip()
+            if not line:
+                self.log.info("Received an empty line")
+                continue
             self.log.debug('<< ' + line)
             try:
                 message = Message(line)

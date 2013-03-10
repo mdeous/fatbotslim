@@ -85,23 +85,23 @@ class CTCPHandler(BaseHandler):
 
     def version(self, msg):
         self.irc.ctcp_reply(
-            'VERSION', msg.src.name,
-            '{0}:{1}:{2}'.format(NAME, VERSION, platform.system())
+            u'VERSION', msg.src.name,
+            u'{0}:{1}:{2}'.format(NAME, VERSION, platform.system())
         )
 
     def source(self, msg):
         self.irc.ctcp_reply(
-            'SOURCE', msg.src.name,
+            u'SOURCE', msg.src.name,
             URL
         )
-        self.irc.ctcp_reply('SOURCE', msg.src.name)
+        self.irc.ctcp_reply(u'SOURCE', msg.src.name)
 
     def time(self, msg):
-        now = datetime.now().strftime('%a %b %d %I:%M:%S%p %Y %Z').strip()
-        self.irc.ctcp_reply('TIME', msg.src.name, now)
+        now = datetime.now().strftime(u'%a %b %d %I:%M:%S%p %Y %Z').strip()
+        self.irc.ctcp_reply(u'TIME', msg.src.name, now)
 
     def ping(self, msg):
-        self.irc.ctcp_reply('PING', msg.src.name, ' '.join(msg.args))
+        self.irc.ctcp_reply(u'PING', msg.src.name, ' '.join(msg.args))
 
 
 class PingHandler(BaseHandler):
@@ -113,7 +113,7 @@ class PingHandler(BaseHandler):
     }
 
     def ping(self, msg):
-        self.irc.cmd('PONG', ' '.join(msg.args))
+        self.irc.cmd(u'PONG', u' '.join(msg.args))
 
 
 class UnknownCodeHandler(BaseHandler):

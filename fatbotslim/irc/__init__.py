@@ -15,3 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with FatBotSlim. If not, see <http://www.gnu.org/licenses/>.
 #
+
+import chardet
+
+
+def u(s, errors='ignore'):
+    """
+    Automatically detects given string's encoding and returns its unicode form.
+    Decoding errors are handled according to the `errors` argument, see `unicode()`
+    documentation for more details.
+
+    :param s: string to decode.
+    :type s: str
+    :param errors: decoding error handling behaviour.
+    :type errors: str
+    :return: decoded string
+    :rtype: unicode
+    """
+    encoding = chardet.detect(s)['encoding']
+    return unicode(s, encoding=encoding, errors=errors)

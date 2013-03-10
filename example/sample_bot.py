@@ -31,7 +31,7 @@ class HelloCommand(CommandHandler):
     when someone uses the "!hello" command (only in public messages).
     """
     triggers = {
-        'hello': [EVT_PUBLIC],
+        u'hello': [EVT_PUBLIC],
     }
 
     def hello(self, msg):

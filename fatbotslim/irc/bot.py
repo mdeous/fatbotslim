@@ -30,12 +30,13 @@ import chardet
 from gevent import spawn, joinall, killall
 from gevent.pool import Group
 
+from fatbotslim.irc import u
 from fatbotslim.irc.codes import *
 from fatbotslim.irc.tcp import TCP, SSL
 from fatbotslim.handlers import CTCPHandler, PingHandler, UnknownCodeHandler
 from fatbotslim.log import create_logger
 
-ctcp_re = re.compile(r'\x01(.*?)\x01')
+ctcp_re = re.compile(ur'\x01(.*?)\x01')
 
 
 class NullMessage(Exception):
@@ -53,7 +54,7 @@ class Message(object):
     def __init__(self, data):
         """
         :param data: line received from the server.
-        :type data: str
+        :type data: unicode
         """
         self._raw = data
         self.erroneous = False
@@ -64,7 +65,7 @@ class Message(object):
             self.erroneous = True
 
     def __str__(self):
-        return "<Message(src='{0}', dst='{1}', command='{2}', args={3})>".format(
+        return u"<Message(src='{0}', dst='{1}', command='{2}', args={3})>".format(
             self.src.name, self.dst, self.command, self.args
         )
 
@@ -74,17 +75,17 @@ class Message(object):
         Extracts message informations from `data`.
 
         :param data: received line.
-        :type data: str
+        :type data: unicode
         :return: extracted informations (source, destination, command, args).
         :rtype: tuple(Source, str, str, list)
         :raise: :class:`fatbotslim.irc.NullMessage` if `data` is empty.
         """
-        src = ''
+        src = u''
         dst = None
-        if data[0] == ':':
-            src, data = data[1:].split(' ', 1)
-        if ' :' in data:
-            data, trailing = data.split(' :', 1)
+        if data[0] == u':':
+            src, data = data[1:].split(u' ', 1)
+        if u' :' in data:
+            data, trailing = data.split(u' :', 1)
             args = data.split()
             args.extend(trailing.split())
         else:
@@ -93,8 +94,8 @@ class Message(object):
         if command in (PRIVMSG, NOTICE):
             dst = args.pop(0)
             if ctcp_re.match(args[0]):
-                args = args[0].strip('\x01').split()
-                command = 'CTCP_' + args.pop(0)
+                args = args[0].strip(u'\x01').split()
+                command = u'CTCP_' + args.pop(0)
         return Source(src), dst, command, args
 
 
@@ -113,7 +114,7 @@ class Source(object):
         self.name, self.mode, self.user, self.host = Source.parse(prefix)
 
     def __str__(self):
-        return "<Source(nick='{0}', mode='{1}', user='{2}', host='{3}')>".format(
+        return u"<Source(nick='{0}', mode='{1}', user='{2}', host='{3}')>".format(
             self.name, self.mode, self.user, self.host
         )
 
@@ -128,15 +129,15 @@ class Source(object):
         :rtype: tuple(str, str, str, str)
         """
         try:
-            nick, rest = prefix.split('!')
+            nick, rest = prefix.split(u'!')
         except ValueError:
             return prefix, None, None, None
         try:
-            mode, rest = rest.split('=')
+            mode, rest = rest.split(u'=')
         except ValueError:
             mode, rest = None, rest
         try:
-            user, host = rest.split('@')
+            user, host = rest.split(u'@')
         except ValueError:
             return nick, mode, rest, None
         return nick, mode, user, host
@@ -171,9 +172,10 @@ class IRC(object):
         self.server = settings['server']
         self.port = settings['port']
         self.ssl = settings['ssl']
-        self.channels = settings['channels']
-        self.nick = settings['nick']
-        self.realname = settings['realname']
+        #self.channels = settings['channels']
+        self.channels = map(u, settings['channels'])
+        self.nick = u(settings['nick'])
+        self.realname = u(settings['realname'])
         self._pool = Group()
         self._handlers = set()
         self.log = create_logger(__name__, level=settings.get('loglevel', 'INFO'))
@@ -197,7 +199,6 @@ class IRC(object):
         self.conn = self._create_connection()
         spawn(self.conn.connect)
         self.set_nick(self.nick)
-#        self.cmd('USER', [self.nick, ' 3 ', '* ', self.realname])
         self.cmd(u'USER', u'{0} 3 * {1}'.format(self.nick, self.realname))
 
     def _send(self, command):
@@ -205,7 +206,7 @@ class IRC(object):
         Sends a raw line to the server.
 
         :param command: line to send.
-        :type command: str
+        :type command: unicode
         """
         command = command.encode('utf-8')
         self.log.debug('>> ' + command)
@@ -220,11 +221,7 @@ class IRC(object):
         while True:
             orig_line = self.conn.iqueue.get()
             self.log.debug('<< ' + orig_line)
-            line = unicode(
-                orig_line,
-                encoding=chardet.detect(orig_line)['encoding'],
-                errors='replace'
-            ).strip()
+            line = u(orig_line, errors='replace').strip()
             err_msg = False
             try:
                 message = Message(line)
@@ -252,7 +249,6 @@ class IRC(object):
                 if command == msg.command:
                     method = getattr(handler, handler.commands[command])
                     self._pool.spawn(method, msg)
-                    #self._pool.spawn(handler.commands[command], msg)
 
     @classmethod
     def randomize_nick(cls, base, suffix_length=3):
@@ -266,8 +262,8 @@ class IRC(object):
         :return: generated nickname.
         :rtype: str
         """
-        suffix = ''.join(choice('0123456789') for _ in range(suffix_length))
-        return '{0}_{1}'.format(base, suffix)
+        suffix = u''.join(choice(u'0123456789') for _ in range(suffix_length))
+        return u'{0}{1}'.format(base, suffix)
 
     def add_handler(self, handler):
         """
@@ -283,14 +279,14 @@ class IRC(object):
         Sends a command to the server.
 
         :param command: IRC code to send.
-        :type command: str
+        :type command: unicode
         :param args: arguments to pass with the command.
         :type args: basestring
         :param prefix: optional prefix to prepend to the command.
         :type prefix: str or None
         """
         if prefix is None:
-            prefix = ''
+            prefix = u''
         raw_cmd = u'{0} {1} {2}'.format(prefix, command, args).strip()
         self._send(raw_cmd)
 

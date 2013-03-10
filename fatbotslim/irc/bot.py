@@ -26,7 +26,7 @@ This module contains IRC protocol related stuff.
 import re
 from os import linesep
 from random import choice
-from traceback import format_exc
+from traceback import format_exc, format_exception_only
 
 from gevent import spawn, joinall, killall
 from gevent.pool import Group
@@ -57,7 +57,12 @@ class Message(object):
         :type data: str
         """
         self._raw = data
-        self.src, self.dst, self.command, self.args = Message.parse(data)
+        self.erroneous = False
+        try:
+            self.src, self.dst, self.command, self.args = Message.parse(data)
+        except IndexError:
+            self.src, self.dst, self.command, self.args = [None] * 4
+            self.erroneous = True
 
     def __str__(self):
         return "<Message(src='{0}', dst='{1}', command='{2}', args={3})>".format(
@@ -213,20 +218,16 @@ class IRC(object):
         Parsed events are put in the object's event queue (`self.events`).
         """
         while True:
-            line = self.conn.iqueue.get().strip()
-            if not line:
-                self.log.info("Received an empty line")
-                continue
+            orig_line = self.conn.iqueue.get()
+            line = orig_line.strip()
             self.log.debug('<< ' + line)
+            err_msg = False
             try:
                 message = Message(line)
             except ValueError:
-                self.log.error(
-                    "Received a line that can't be parsed:%(linesep)s"
-                    "%(line)s%(linesep)s%(exception)s" % dict(
-                        linesep=linesep, line=line, exception=format_exc()
-                    )
-                )
+                err_msg = True
+            if err_msg or message.erroneous:
+                self.log.error("Received a line that can't be parsed: \"%s\"" % orig_line)
                 continue
             if message.command == ERR_NICKNAMEINUSE:
                 self.set_nick(IRC.randomize_nick(self.nick))

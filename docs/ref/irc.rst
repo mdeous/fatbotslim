@@ -8,3 +8,5 @@ fatbotslim.irc
    irc/bot
    irc/tcp
    irc/codes
+
+.. autofunction:: fatbotslim.irc.u

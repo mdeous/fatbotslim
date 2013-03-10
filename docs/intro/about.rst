@@ -7,7 +7,7 @@ About FatBotSlim
 :Homepage: https://github.com/mattoufoutu/fatbotslim
 :Documentation: http://fatbotslim.rtfd.org
 :Issue tracker: https://github.com/mattoufoutu/fatbotslim/issues
-:Git clone URI: git://github.com/mattoufoutu/fatbotslim.git
+:Git clone URI: https://github.com/mattoufoutu/fatbotslim.git
 
 FatBotSlim is an asynchronous IRC bot library written in Python using the
 ``gevent`` library.

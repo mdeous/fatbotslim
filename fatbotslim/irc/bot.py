@@ -26,7 +26,6 @@ This module contains IRC protocol related stuff.
 import re
 from random import choice
 
-import chardet
 from gevent import spawn, joinall, killall
 from gevent.pool import Group
 
@@ -108,7 +107,7 @@ class Source(object):
     def __init__(self, prefix):
         """
         :param prefix: prefix with format ``<servername>|<nick>['!'<user>]['@'<host>]``.
-        :type prefix: str
+        :type prefix: unicode
         """
         self._raw = prefix
         self.name, self.mode, self.user, self.host = Source.parse(prefix)
@@ -124,7 +123,7 @@ class Source(object):
         Extracts informations from `prefix`.
 
         :param prefix: prefix with format ``<servername>|<nick>['!'<user>]['@'<host>]``.
-        :type prefix: str
+        :type prefix: unicode
         :return: extracted informations (nickname or host, mode, username, host).
         :rtype: tuple(str, str, str, str)
         """
@@ -172,7 +171,6 @@ class IRC(object):
         self.server = settings['server']
         self.port = settings['port']
         self.ssl = settings['ssl']
-        #self.channels = settings['channels']
         self.channels = map(u, settings['channels'])
         self.nick = u(settings['nick'])
         self.realname = u(settings['realname'])
@@ -256,11 +254,11 @@ class IRC(object):
         Generates a pseudo-random nickname.
 
         :param base: prefix to use for the generated nickname.
-        :type base: str
+        :type base: unicode
         :param suffix_length: amount of digits to append to `base`
         :type suffix_length: int
         :return: generated nickname.
-        :rtype: str
+        :rtype: unicode
         """
         suffix = u''.join(choice(u'0123456789') for _ in range(suffix_length))
         return u'{0}{1}'.format(base, suffix)
@@ -343,7 +341,7 @@ class IRC(object):
         Changes the bot's nickname.
 
         :param nick: new nickname to use
-        :type nick: str
+        :type nick: unicode
         """
         self.cmd(u'NICK', nick)
 

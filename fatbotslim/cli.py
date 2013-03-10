@@ -117,6 +117,9 @@ def make_bot():
 def main(bot):
     """
     Entry point for the command line launcher.
+
+    :param bot: the IRC bot to run
+    :type bot: :class:`fatbotslim.irc.bot.IRC`
     """
     greenlet = spawn(bot.run)
     try:

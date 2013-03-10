@@ -2,6 +2,12 @@
 Creating custom handlers
 ========================
 
+.. note::
+
+    Internally, all processed data are unicode strings.
+    If you need to decode strings, you can use the provided :func:`fatbotslim.irc.u` function.
+
+
 Basic handlers
 ==============
 
@@ -30,23 +36,23 @@ A good example of a custom handler is FatBotSlim's integrated :class:`fatbotslim
 
         def version(self, msg):
             self.irc.ctcp_reply(
-                'VERSION', msg.src.name,
-                '{0}:{1}:{2}'.format(NAME, VERSION, platform.system())
+                u'VERSION', msg.src.name,
+                u'{0}:{1}:{2}'.format(NAME, VERSION, platform.system())
             )
 
         def source(self, msg):
             self.irc.ctcp_reply(
-                'SOURCE', msg.src.name,
-                'https://github.com/mattoufoutu/fatbotslim'
+                u'SOURCE', msg.src.name,
+                u'https://github.com/mattoufoutu/fatbotslim'
             )
-            self.irc.ctcp_reply('SOURCE', msg.src.name)
+            self.irc.ctcp_reply(u'SOURCE', msg.src.name)
 
         def time(self, msg):
-            now = datetime.now().strftime('%a %b %d %I:%M:%S%p %Y %Z').strip()
-            self.irc.ctcp_reply('TIME', msg.src.name, now)
+            now = datetime.now().strftime(u'%a %b %d %I:%M:%S%p %Y %Z').strip()
+            self.irc.ctcp_reply(u'TIME', msg.src.name, now)
 
         def ping(self, msg):
-            self.irc.ctcp_reply('PING', msg.src.name, ' '.join(msg.args))
+            self.irc.ctcp_reply(u'PING', msg.src.name, u' '.join(msg.args))
 
 Another, simpler, basic handler is the integrated :class:`fatbotslim.handlers.PingHandler`,
 this one simply answers to server's PINGs::
@@ -60,7 +66,7 @@ this one simply answers to server's PINGs::
         }
 
         def ping(self, msg):
-            self.irc.cmd('PONG', ' '.join(msg.args))
+            self.irc.cmd(u'PONG', u' '.join(msg.args))
 
 Command handlers
 ================
@@ -86,11 +92,11 @@ Here is a command handler that says hello when it receives ``!hello`` in public:
 
     class HelloCommand(CommandHandler):
         triggers = {
-            'hello': [EVT_PUBLIC],
+            u'hello': [EVT_PUBLIC],
         }
 
         def hello(self, msg):
-            self.irc.msg(msg.dst, "Hello, {0}!".format(msg.src.name))
+            self.irc.msg(msg.dst, u"Hello, {0}!".format(msg.src.name))
 
 If you wanted the handler to answer also to private messages, you would simply have
 to add 'private' to the "hello" event list and set the answer destination accordingly::
@@ -99,9 +105,9 @@ to add 'private' to the "hello" event list and set the answer destination accord
 
     class HelloCommand(CommandHandler):
         triggers = {
-            'hello': [EVT_PUBLIC, EVT_PRIVATE],
+            u'hello': [EVT_PUBLIC, EVT_PRIVATE],
         }
 
         def hello(self, msg):
             dst = msg.src.name if (msg.dst == irc.nick) else msg.dst
-            self.irc.msg(dst, "Hello {0}!".format(msg.src.name))
+            self.irc.msg(dst, u"Hello {0}!".format(msg.src.name))

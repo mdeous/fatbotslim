@@ -32,5 +32,8 @@ def u(s, errors='ignore'):
     :return: decoded string
     :rtype: unicode
     """
-    encoding = chardet.detect(s)['encoding']
-    return unicode(s, encoding=encoding, errors=errors)
+    try:
+        return s.decode('utf-8', errors=errors)
+    except UnicodeDecodeError:
+        encoding = chardet.detect(s)['encoding']
+        return unicode(s, encoding=encoding, errors=errors)

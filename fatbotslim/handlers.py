@@ -214,6 +214,8 @@ class HelpHandler(CommandHandler):
                     method = getattr(handler, command)
                     if hasattr(method, '__doc__') and method.__doc__:
                         commands[command] = method.__doc__.strip()
+                    else:
+                        commands[command] = 'No help available for command: %s' % command
 
         if len(msg.args) == 2:
             if msg.args[1] not in commands:

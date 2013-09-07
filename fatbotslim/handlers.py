@@ -193,3 +193,40 @@ class CommandHandler(BaseHandler):
             elif (msg.command == NOTICE) and (EVT_NOTICE in self.triggers[trigger]):
                 msg.event = EVT_NOTICE
                 method(msg)
+
+
+class HelpHandler(CommandHandler):
+    """
+    Provides automatic help messages for :class:`fatbotslim.handlers.CommandHandler` commands.
+    """
+    triggers = {
+        'help': [EVT_PUBLIC, EVT_PRIVATE, EVT_NOTICE]
+    }
+
+    def help(self, msg):
+        """
+        help [command] - displays available commands, or help message for given command
+        """
+        commands = {}
+        for handler in self.irc.handlers:
+            if isinstance(handler, CommandHandler):
+                for command in handler.triggers:
+                    method = getattr(handler, command)
+                    if hasattr(method, '__doc__') and method.__doc__:
+                        commands[command] = method.__doc__.strip()
+
+        if len(msg.args) == 2:
+            if msg.args[1] not in commands:
+                message = 'Unknown command: %s' % msg.args[1]
+            else:
+                message = commands[msg.args[1]]
+        else:
+            message = 'Available commands: %s' % ', '.join(commands.keys())
+
+        if msg.event == EVT_PUBLIC:
+            self.irc.msg(msg.dst, message)
+        elif msg.event == EVT_PRIVATE:
+            self.irc.msg(msg.src, message)
+        elif msg.event == EVT_NOTICE:
+            self.irc.notice(msg.src, message)
+

@@ -263,14 +263,20 @@ class IRC(object):
         suffix = u''.join(choice(u'0123456789') for _ in range(suffix_length))
         return u'{0}{1}'.format(base, suffix)
 
-    def add_handler(self, handler):
+    def add_handler(self, handler, args=None, kwargs=None):
         """
         Registers a new handler.
 
         :param handler: handler to register.
         :type handler: :class:``fatbotslim.handlers.BaseHandler`
+        :param args: positional arguments to pass to the handler's constructor.
+        :type args: list
+        :param kwargs: keyword arguments to pass to the handler's constructor.
+        :type kwargs: dict
         """
-        self._handlers.add(handler(self))
+        args = [] if args is None else args
+        kwargs = {} if kwargs is None else kwargs
+        self._handlers.add(handler(self, *args, **kwargs))
 
     def cmd(self, command, args, prefix=None):
         """

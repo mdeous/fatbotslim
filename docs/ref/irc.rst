@@ -8,5 +8,6 @@ fatbotslim.irc
    irc/bot
    irc/tcp
    irc/codes
+   irc/colors
 
 .. autofunction:: fatbotslim.irc.u

@@ -10,6 +10,7 @@ Yet another Python IRC bot library...
 - multi-server
 - easy to use plugin system
 - colored logging
+- colored IRC messages
 - command line parser to set your custom bot settings from the console
 
 ### Dependencies:

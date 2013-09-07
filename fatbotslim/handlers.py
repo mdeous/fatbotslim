@@ -33,11 +33,6 @@ from fatbotslim.irc.codes import *
 EVT_PUBLIC = 'public'
 EVT_PRIVATE = 'private'
 EVT_NOTICE = 'notice'
-EVT_ALL = (
-    EVT_PUBLIC,
-    EVT_PRIVATE,
-    EVT_NOTICE
-)
 
 
 class HandlerError(Exception):
@@ -173,7 +168,7 @@ class CommandHandler(BaseHandler):
                     )
                 )
             for event in events:
-                if event not in EVT_ALL:
+                if event not in (EVT_PUBLIC, EVT_PRIVATE, EVT_NOTICE):
                     raise HandlerError('Unknown event type: %s' % event)
 
     def _dispatch_trigger(self, msg):

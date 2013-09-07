@@ -13,3 +13,5 @@ fatbotslim.handlers
 .. autoclass:: fatbotslim.handlers.CTCPHandler
 
 .. autoclass:: fatbotslim.handlers.UnknownCodeHandler
+
+.. autoclass:: fatbotslim.handlers.HelpHandler

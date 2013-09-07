@@ -58,3 +58,24 @@ mimics strings behaviour, and thus allows to call string methods on it. ::
     upper_message = message.upper()
     title_message = message.title()
 
+Available colors are:
+
+* blue
+* brown
+* dark_green
+* magenta
+* purple
+* dark_grey
+* light_grey
+* yellow
+* black
+* teal
+* cyan
+* olive
+* green
+* white
+* dark_blue
+* red
+
+If no color is specified when instanciating :class:`fatbotslim.irc.colors.ColorMessage`, the value
+defaults to "black".

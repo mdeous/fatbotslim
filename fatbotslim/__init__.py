@@ -17,6 +17,6 @@
 #
 
 NAME = 'FatBotSlim'
-VERSION = '0.1b'
+VERSION = '0.1'
 AUTHOR = 'Mathieu D. (MatToufoutu)'
 URL = 'http://mattoufoutu.github.com/fatbotslim'

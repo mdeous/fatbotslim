@@ -174,9 +174,9 @@ class IRC(object):
         self.channels = map(u, settings['channels'])
         self.nick = u(settings['nick'])
         self.realname = u(settings['realname'])
-        self._pool = Group()
-        self._handlers = set()
+        self.handlers = set()
         self.log = create_logger(__name__, level=settings.get('loglevel', 'INFO'))
+        self._pool = Group()
         for handler in self.default_handlers:
             self.add_handler(handler)
 
@@ -242,7 +242,7 @@ class IRC(object):
         :param msg: received message
         :type msg: :class:`fatbotslim.irc.Message`
         """
-        for handler in self._handlers:
+        for handler in self.handlers:
             for command in handler.commands:
                 if command == msg.command:
                     method = getattr(handler, handler.commands[command])
@@ -276,7 +276,7 @@ class IRC(object):
         """
         args = [] if args is None else args
         kwargs = {} if kwargs is None else kwargs
-        self._handlers.add(handler(self, *args, **kwargs))
+        self.handlers.add(handler(self, *args, **kwargs))
 
     def cmd(self, command, args, prefix=None):
         """

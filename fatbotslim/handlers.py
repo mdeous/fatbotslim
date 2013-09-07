@@ -189,9 +189,12 @@ class CommandHandler(BaseHandler):
             if msg.command == PRIVMSG:
                 if msg.dst == self.irc.nick:
                     if EVT_PRIVATE in self.triggers[trigger]:
+                        msg.event = EVT_PRIVATE
                         method(msg)
                 else:
                     if EVT_PUBLIC in self.triggers[trigger]:
+                        msg.event = EVT_PUBLIC
                         method(msg)
             elif (msg.command == NOTICE) and (EVT_NOTICE in self.triggers[trigger]):
-                    method(msg)
+                msg.event = EVT_NOTICE
+                method(msg)

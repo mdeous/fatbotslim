@@ -29,7 +29,7 @@ class ColorMessage(object):
     Allows to create colorized strings.
     Created objects behave like real strings, allowing to call `str` methods.
     """
-    __colors = {
+    _colors = {
         'white':        u'\u000300',
         'black':        u'\u000301',
         'dark_blue':    u'\u000302',
@@ -47,15 +47,15 @@ class ColorMessage(object):
         'dark_grey':    u'\u000314',
         'light_grey':   u'\u000315'
     }
-    __bold = u'\u0002'
-    __underline = u'\u001f'
-    __highlight = u'\u0016'
+    _bold = u'\u0002'
+    _underline = u'\u001f'
+    _highlight = u'\u0016'
 
     def __init__(self, content, color='black', bold=False, underline=False, highlight=False):
         """
         :param content: message to colorize.
         :type content: unicode
-        :param color: one of :attr:`fatbotslim.irc.colors.ColorMessage.__colors`.
+        :param color: one of :attr:`fatbotslim.irc.colors.ColorMessage._colors`.
         :type color: str
         :param bold: if the string has to be in bold.
         :type bold: bool
@@ -87,7 +87,7 @@ class ColorMessage(object):
         """
         :param string: message to colorize.
         :type string: unicode
-        :param color: one of :attr:`fatbotslim.irc.colors.ColorMessage.__colors`.
+        :param color: one of :attr:`fatbotslim.irc.colors.ColorMessage._colors`.
         :type color: str
         :param bold: if the string has to be in bold.
         :type bold: bool
@@ -98,10 +98,10 @@ class ColorMessage(object):
         """
         result = ''
         if bold:
-            result += ColorMessage.__bold
+            result += ColorMessage._bold
         if underline:
-            result += ColorMessage.__underline
+            result += ColorMessage._underline
         if highlight:
-            result += ColorMessage.__highlight
-        result += ColorMessage.__colors.get(color, ColorMessage.__colors['black'])
+            result += ColorMessage._highlight
+        result += ColorMessage._colors.get(color, ColorMessage._colors['black'])
         return result+string

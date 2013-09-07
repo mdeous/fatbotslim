@@ -20,6 +20,7 @@ Dependencies:
 ~~~~~~~~~~~~~
 
 -  gevent
+-  chardet
 
 Documentation:
 ~~~~~~~~~~~~~~

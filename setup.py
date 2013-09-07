@@ -11,7 +11,7 @@ setup(
     name=NAME,
     version=VERSION,
     description='Yet another IRC bot library',
-    long_description=open(os.path.join(CURRENT_DIR, 'README.md')).read().strip(),
+    long_description=open(os.path.join(CURRENT_DIR, 'README.rst')).read().strip(),
     author=AUTHOR,
     author_email='mattoufootu@gmail.com',
     url=URL,

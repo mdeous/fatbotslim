@@ -50,6 +50,7 @@ class ColorMessage(object):
     _bold = u'\u0002'
     _underline = u'\u001f'
     _highlight = u'\u0016'
+    _reset = u'\017'
 
     def __init__(self, content, color='black', bold=False, underline=False, highlight=False):
         """
@@ -104,4 +105,4 @@ class ColorMessage(object):
         if highlight:
             result += ColorMessage._highlight
         result += ColorMessage._colors.get(color, ColorMessage._colors['black'])
-        return result+string
+        return result+string+ColorMessage._reset

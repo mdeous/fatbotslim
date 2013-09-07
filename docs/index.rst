@@ -23,6 +23,7 @@ Usage
 
    usage/tutorials
    usage/handlers
+   usage/utilities
 
 API Reference
 =============

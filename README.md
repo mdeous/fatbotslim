@@ -9,6 +9,7 @@ Yet another Python IRC bot library...
 - asynchronous
 - multi-server
 - easy to use plugin system
+- automated help messages generation for custom plugins
 - colored logging
 - colored IRC messages
 - command line parser to set your custom bot settings from the console

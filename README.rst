@@ -22,6 +22,19 @@ Dependencies:
 -  gevent
 -  chardet
 
+Installation:
+~~~~~~~~~~~~~
+
+* From GitHub::
+
+    git clone https://github.com/mattoufoutu/fatbotslim
+    cd fatbotslim
+    python setup.py install
+
+* From PyPI::
+
+    pip install fatbotslim
+
 Documentation:
 ~~~~~~~~~~~~~~
 

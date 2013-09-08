@@ -27,7 +27,7 @@ Installation:
 
 * From GitHub::
 
-    git clone https://github.com/mattoufoutu/fatbotslim
+    git clone https://github.com/mattoufoutu/fatbotslim.git
     cd fatbotslim
     python setup.py install
 

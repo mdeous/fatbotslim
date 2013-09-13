@@ -175,7 +175,7 @@ class IRC(object):
         self.nick = u(settings['nick'])
         self.realname = u(settings['realname'])
         self.handlers = set()
-        self.log = create_logger(__name__, level=settings.get('loglevel', 'INFO'))
+        self.log = create_logger(__name__, level=settings.get('loglevel', 'INFO').upper())
         self._pool = Group()
         for handler in self.default_handlers:
             self.add_handler(handler)

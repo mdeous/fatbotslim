@@ -79,3 +79,49 @@ Available colors are:
 
 If no color is specified when instanciating :class:`fatbotslim.irc.colors.ColorMessage`, the value
 defaults to "black".
+
+Rights Management
+=================
+
+`FatBotSlim` provides a built-in handler (:class:`fatbotslim.handlers.RightsHandler`) to manage
+who should be allowed to run specific commands. It allows to define which users can run which
+commands, and on which event(s) type(s).
+
+This special handler is automatically enabled, and is accessible through the
+:attr:`fatbotslim.irc.bot.IRC.rights` attribute. It can be permanently disabled using the
+:meth:`fatbotslim.irc.bot.IRC.enable_rights` method, and can be re-enabled using the
+:meth:`fatbotslim.irc.bot.IRC.disable_rights` method.
+
+Settings permissions
+--------------------
+
+Adding a new permission is done using the :meth:`fatbotslim.irc.bot.IRC.rights.set_restriction`
+method.
+
+For example, to restrict usage of the `hello` command to a user named `LeetUser` in public messages,
+the following code should be used (assuming `bot` is the :class:`fatbotslim.irc.bot.IRC` instance::
+
+    bot.rights.set_permission('hello', 'LeetUser', [EVT_PUBLIC])
+
+Once this is done, only `LeetUser` will be allowed to use the `hello` command, and only in public
+messages.
+
+Global rights can also be set using `*` as the username. In the following example, `LeetUser` would
+be allowed to use the `hello` command in private messages only, and all the other users would be
+allowed to use it in public messages and notices only. ::
+
+    bot.rights.set_restriction('hello', 'LeetUser', [EVT_PRIVATE])
+    bot.rights.set_restriction('hello', '*', [EVT_PUBLIC, EVT_NOTICE])
+
+Removing permissions
+--------------------
+
+Removing a permission is done using the :meth:`fatbotslim.irc.bot.IRC.rights.del_restriction`
+method.
+
+The following code snippet would remove the previously set permission for `LeetUser`. ::
+
+    bot.rights.del_restriction('hello', 'LeetUser', [EVT_PRIVATE])
+
+Only given event(s) type(s) are removed from the permission, so, if `LeetUser` was previously
+allowed to use the `hello` command in public messages too, it would still have the right to.

@@ -269,11 +269,15 @@ class RightsHandler(CommandHandler):
         :param event_types: types of events that should be removed from restriction.
         :type event_types: list
         """
-        for event_type in event_types:
-            try:
-                self.commands_rights[command][user.lower()].remove(event_type)
-            except ValueError:
-                pass
+        if user.lower() in self.commands_rights[command]:
+            for event_type in event_types:
+                try:
+                    self.commands_rights[command][user.lower()].remove(event_type)
+                except ValueError:
+                    pass
+            if not self.commands_rights[command][user.lower()]:
+                self.commands_rights[command].pop(user.lower())
+
 
     def handle_rights(self, msg):
         """

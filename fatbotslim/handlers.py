@@ -26,6 +26,7 @@ and allow creation of custom handlers.
 
 import platform
 from datetime import datetime
+from collections import defaultdict
 
 from fatbotslim import NAME, VERSION, URL
 from fatbotslim.irc.codes import *
@@ -232,3 +233,36 @@ class HelpHandler(CommandHandler):
         elif msg.event == EVT_NOTICE:
             self.irc.notice(msg.src, message)
 
+
+class RightsHandler(CommandHandler):
+    notify = True
+    commands_rights = defaultdict(dict)
+
+    def set_restriction(self, command, user, event_types):
+        self.commands_rights[command][user.lower()] = event_types
+        if command not in self.triggers:
+            self.triggers[command] = [EVT_PUBLIC, EVT_PRIVATE, EVT_NOTICE]
+        if not hasattr(self, command):
+            setattr(self, command, lambda msg: self.handle_rights(msg))
+
+    def del_restriction(self, command, user, event_types):
+        for event_type in event_types:
+            try:
+                self.commands_rights[command][user.lower()].remove(event_type)
+            except ValueError:
+                pass
+
+    def handle_rights(self, msg):
+        command = msg.args[0][1:]
+        if command in self.commands_rights:
+            if msg.src.name.lower() in self.commands_rights[command]:
+                if msg.event not in self.commands_rights[command][msg.src.name.lower()]:
+                    msg.propagate = False
+                    if self.notify:
+                        message = "You're not allowed to use the '%s' command" % command
+                        if msg.event == EVT_PUBLIC:
+                            self.irc.msg(msg.dst, message)
+                        elif msg.event == EVT_PRIVATE:
+                            self.irc.msg(msg.src.name, message)
+                        elif msg.event == EVT_NOTICE:
+                            self.irc.notice(msg.src.name, message)

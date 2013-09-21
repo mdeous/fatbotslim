@@ -32,7 +32,7 @@ from gevent.pool import Group
 from fatbotslim.irc import u
 from fatbotslim.irc.codes import *
 from fatbotslim.irc.tcp import TCP, SSL
-from fatbotslim.handlers import CTCPHandler, PingHandler, UnknownCodeHandler
+from fatbotslim.handlers import CTCPHandler, PingHandler, UnknownCodeHandler, RightsHandler
 from fatbotslim.log import create_logger
 
 ctcp_re = re.compile(ur'\x01(.*?)\x01')
@@ -148,11 +148,12 @@ class IRC(object):
     The main IRC bot class.
     """
     quit_msg = u"I'll be back!"
-    default_handlers = {
+    default_handlers = [
         CTCPHandler,
         PingHandler,
         UnknownCodeHandler,
-    }
+        RightsHandler
+    ]
 
     def __init__(self, settings):
         """
@@ -175,9 +176,10 @@ class IRC(object):
         self.channels = map(u, settings['channels'])
         self.nick = u(settings['nick'])
         self.realname = u(settings['realname'])
-        self.handlers = set()
+        self.handlers = []
         self.log = create_logger(__name__, level=settings.get('loglevel', 'INFO').upper())
         self._pool = Group()
+        self.rights = None
         for handler in self.default_handlers:
             self.add_handler(handler)
 
@@ -298,7 +300,11 @@ class IRC(object):
         """
         args = [] if args is None else args
         kwargs = {} if kwargs is None else kwargs
-        self.handlers.add(handler(self, *args, **kwargs))
+        handler_instance = handler(self, *args, **kwargs)
+        if isinstance(handler_instance, RightsHandler):
+            self.rights = handler_instance
+        if handler_instance not in self.handlers:
+            self.handlers.append(handler_instance)
 
     def cmd(self, command, args, prefix=None):
         """

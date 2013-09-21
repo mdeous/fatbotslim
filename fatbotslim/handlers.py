@@ -235,10 +235,23 @@ class HelpHandler(CommandHandler):
 
 
 class RightsHandler(CommandHandler):
+    """
+    Provides rights management for :class:`fatbotslim.handlers.CommandHandler` commands.
+    """
     notify = True
     commands_rights = defaultdict(dict)
 
     def set_restriction(self, command, user, event_types):
+        """
+        Adds restriction for given `command`.
+
+        :param command: command on which the restriction should be set.
+        :type command: str
+        :param user: username for which the restriction applies.
+        :type user: str
+        :param event_types: types of events for which the command is allowed.
+        :type event_types: list
+        """
         self.commands_rights[command][user.lower()] = event_types
         if command not in self.triggers:
             self.triggers[command] = [EVT_PUBLIC, EVT_PRIVATE, EVT_NOTICE]
@@ -246,6 +259,16 @@ class RightsHandler(CommandHandler):
             setattr(self, command, lambda msg: self.handle_rights(msg))
 
     def del_restriction(self, command, user, event_types):
+        """
+        Removes restriction for given `command`.
+
+        :param command: command on which the restriction should be removed.
+        :type command: str
+        :param user: username for which restriction should be removed.
+        :type user: str
+        :param event_types: types of events that should be removed from restriction.
+        :type event_types: list
+        """
         for event_type in event_types:
             try:
                 self.commands_rights[command][user.lower()].remove(event_type)
@@ -253,6 +276,12 @@ class RightsHandler(CommandHandler):
                 pass
 
     def handle_rights(self, msg):
+        """
+        Catch-all command that is called whenever a restricted command is called.
+
+        :param msg: message that triggered the command.
+        :type msg: :class:`fatbotslim.irc.Message`
+        """
         command = msg.args[0][1:]
         if command in self.commands_rights:
             if msg.src.name.lower() in self.commands_rights[command]:

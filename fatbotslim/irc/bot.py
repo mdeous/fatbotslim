@@ -287,6 +287,24 @@ class IRC(object):
         suffix = u''.join(choice(u'0123456789') for _ in range(suffix_length))
         return u'{0}{1}'.format(base, suffix)
 
+    def enable_rights(self):
+        """
+        Enables rights management provided by :class:`fatbotslim.handlers.RightsHandler`.
+        """
+        if self.rights is None:
+            handler_instance = RightsHandler(self)
+            self.handlers.insert(len(self.default_handlers), handler_instance)
+
+    def disable_rights(self):
+        """
+        Disables rights management provided by :class:`fatbotslim.handlers.RightsHandler`.
+        """
+        for handler in self.handlers:
+            if isinstance(handler, RightsHandler):
+                self.handlers.remove(handler)
+                break
+        self.rights = None
+
     def add_handler(self, handler, args=None, kwargs=None):
         """
         Registers a new handler.

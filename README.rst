@@ -11,6 +11,7 @@ Features:
 -  asynchronous
 -  multi-server
 -  easy to use plugin system
+-  rights management for user-defined commands
 -  automated help messages generation for custom plugins
 -  colored logging
 -  colored IRC messages

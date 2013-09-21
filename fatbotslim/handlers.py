@@ -277,7 +277,7 @@ class RightsHandler(CommandHandler):
 
     def handle_rights(self, msg):
         """
-        Catch-all command that is called whenever a restricted command is called.
+        Catch-all command that is called whenever a restricted command is triggered.
 
         :param msg: message that triggered the command.
         :type msg: :class:`fatbotslim.irc.Message`
@@ -287,11 +287,14 @@ class RightsHandler(CommandHandler):
             if msg.src.name.lower() in self.commands_rights[command]:
                 if msg.event not in self.commands_rights[command][msg.src.name.lower()]:
                     msg.propagate = False
-                    if self.notify:
-                        message = "You're not allowed to use the '%s' command" % command
-                        if msg.event == EVT_PUBLIC:
-                            self.irc.msg(msg.dst, message)
-                        elif msg.event == EVT_PRIVATE:
-                            self.irc.msg(msg.src.name, message)
-                        elif msg.event == EVT_NOTICE:
-                            self.irc.notice(msg.src.name, message)
+            elif '*' in self.commands_rights[command]:
+                if msg.event not in self.commands_rights[command]['*']:
+                    msg.propagate = False
+            if (not msg.propagate) and self.notify:
+                message = "You're not allowed to use the '%s' command" % command
+                if msg.event == EVT_PUBLIC:
+                    self.irc.msg(msg.dst, message)
+                elif msg.event == EVT_PRIVATE:
+                    self.irc.msg(msg.src.name, message)
+                elif msg.event == EVT_NOTICE:
+                    self.irc.notice(msg.src.name, message)

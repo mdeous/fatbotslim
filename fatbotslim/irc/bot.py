@@ -57,6 +57,7 @@ class Message(object):
         """
         self._raw = data
         self.erroneous = False
+        self.propagate = True
         try:
             self.src, self.dst, self.command, self.args = Message.parse(data)
         except IndexError:
@@ -242,11 +243,32 @@ class IRC(object):
         :param msg: received message
         :type msg: :class:`fatbotslim.irc.Message`
         """
-        for handler in self.handlers:
-            for command in handler.commands:
+        def handler_yielder():
+            for handler in self.handlers:
+                yield handler
+
+        def handler_callback(_):
+            if msg.propagate:
+                try:
+                    h = hyielder.next()
+                    g = self._pool.spawn(handler_runner, h)
+                    g.link(handler_callback)
+                except StopIteration:
+                    pass
+
+        def handler_runner(h):
+            for command in h.commands:
                 if command == msg.command:
-                    method = getattr(handler, handler.commands[command])
-                    self._pool.spawn(method, msg)
+                    method = getattr(h, h.commands[command])
+                    method(msg)
+
+        hyielder = handler_yielder()
+        try:
+            next_handler = hyielder.next()
+            g = self._pool.spawn(handler_runner, next_handler)
+            g.link(handler_callback)
+        except StopIteration:
+            pass
 
     @classmethod
     def randomize_nick(cls, base, suffix_length=3):
@@ -268,7 +290,7 @@ class IRC(object):
         Registers a new handler.
 
         :param handler: handler to register.
-        :type handler: :class:``fatbotslim.handlers.BaseHandler`
+        :type handler: :class:`fatbotslim.handlers.BaseHandler`
         :param args: positional arguments to pass to the handler's constructor.
         :type args: list
         :param kwargs: keyword arguments to pass to the handler's constructor.

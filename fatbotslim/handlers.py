@@ -278,7 +278,6 @@ class RightsHandler(CommandHandler):
             if not self.commands_rights[command][user.lower()]:
                 self.commands_rights[command].pop(user.lower())
 
-
     def handle_rights(self, msg):
         """
         Catch-all command that is called whenever a restricted command is triggered.

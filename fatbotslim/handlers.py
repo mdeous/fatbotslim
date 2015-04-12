@@ -30,10 +30,13 @@ from collections import defaultdict
 
 from fatbotslim import NAME, VERSION, URL
 from fatbotslim.irc.codes import *
+from fatbotslim.log import create_logger
 
 EVT_PUBLIC = 'public'
 EVT_PRIVATE = 'private'
 EVT_NOTICE = 'notice'
+
+log = create_logger(__name__)
 
 
 class HandlerError(Exception):
@@ -121,7 +124,7 @@ class UnknownCodeHandler(BaseHandler):
     }
 
     def unknown_code(self, msg):
-        self.irc.log.info("Received an unknown command: {0}".format(msg.command))
+        log.info("Received an unknown command: {0}".format(msg.command))
 
 
 class CommandHandler(BaseHandler):

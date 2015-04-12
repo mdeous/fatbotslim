@@ -36,6 +36,7 @@ from fatbotslim.handlers import CTCPHandler, PingHandler, UnknownCodeHandler, Ri
 from fatbotslim.log import create_logger
 
 ctcp_re = re.compile(ur'\x01(.*?)\x01')
+log = create_logger(__name__)
 
 
 class NullMessage(Exception):
@@ -177,9 +178,9 @@ class IRC(object):
         self.nick = u(settings['nick'])
         self.realname = u(settings['realname'])
         self.handlers = []
-        self.log = create_logger(__name__, level=settings.get('loglevel', 'INFO').upper())
         self._pool = Group()
         self.rights = None
+        log.setLevel(settings.get('loglevel', 'INFO'))
         for handler in self.default_handlers:
             self.add_handler(handler)
 
@@ -210,7 +211,7 @@ class IRC(object):
         :type command: unicode
         """
         command = command.encode('utf-8')
-        self.log.debug('>> ' + command)
+        log.debug('>> ' + command)
         self.conn.oqueue.put(command)
 
     def _event_loop(self):
@@ -221,7 +222,7 @@ class IRC(object):
         """
         while True:
             orig_line = self.conn.iqueue.get()
-            self.log.debug('<< ' + orig_line)
+            log.debug('<< ' + orig_line)
             line = u(orig_line, errors='replace').strip()
             err_msg = False
             try:
@@ -229,7 +230,7 @@ class IRC(object):
             except ValueError:
                 err_msg = True
             if err_msg or message.erroneous:
-                self.log.error("Received a line that can't be parsed: \"%s\"" % orig_line)
+                log.error("Received a line that can't be parsed: \"%s\"" % orig_line)
                 continue
             if message.command == ERR_NICKNAMEINUSE:
                 self.set_nick(IRC.randomize_nick(self.nick))

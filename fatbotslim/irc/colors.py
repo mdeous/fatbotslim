@@ -30,22 +30,22 @@ class ColorMessage(object):
     Created objects behave like real strings, allowing to call `str` methods.
     """
     _colors = {
-        'white':        u'\u000300',
-        'black':        u'\u000301',
-        'dark_blue':    u'\u000302',
-        'dark_green':   u'\u000303',
-        'red':          u'\u000304',
-        'brown':        u'\u000305',
-        'purple':       u'\u000306',
-        'olive':        u'\u000307',
-        'yellow':       u'\u000308',
-        'green':        u'\u000309',
-        'teal':         u'\u000310',
-        'cyan':         u'\u000311',
-        'blue':         u'\u000312',
-        'magenta':      u'\u000313',
-        'dark_grey':    u'\u000314',
-        'light_grey':   u'\u000315'
+        'white': u'\u000300',
+        'black': u'\u000301',
+        'dark_blue': u'\u000302',
+        'dark_green': u'\u000303',
+        'red': u'\u000304',
+        'brown': u'\u000305',
+        'purple': u'\u000306',
+        'olive': u'\u000307',
+        'yellow': u'\u000308',
+        'green': u'\u000309',
+        'teal': u'\u000310',
+        'cyan': u'\u000311',
+        'blue': u'\u000312',
+        'magenta': u'\u000313',
+        'dark_grey': u'\u000314',
+        'light_grey': u'\u000315'
     }
     _bold = u'\u0002'
     _underline = u'\u001f'
@@ -105,4 +105,4 @@ class ColorMessage(object):
         if highlight:
             result += ColorMessage._highlight
         result += ColorMessage._colors.get(color, ColorMessage._colors['black'])
-        return result+string+ColorMessage._reset
+        return result + string + ColorMessage._reset

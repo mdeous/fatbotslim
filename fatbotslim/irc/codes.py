@@ -319,7 +319,7 @@ RESPONSES = set([
 
 # Reserved numerics.
 # These numerics are not described above since they fall into one of the following categories:
-#    1) no longer in use;
+# 1) no longer in use;
 #    2) reserved for future planned use;
 #    3) in current use but are part of a non-generic 'feature' of the current IRC server.
 RPL_TRACECLASS = '209'
@@ -401,4 +401,6 @@ class UnknownCode(object):
 
     def __ne__(self, other):
         return other in self.known_codes
+
+
 UNKNOWN_CODE = UnknownCode(ALL_CODES)

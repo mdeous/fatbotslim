@@ -30,6 +30,7 @@ from gevent.ssl import wrap_socket
 
 from fatbotslim.log import create_logger
 
+
 log = create_logger(__name__)
 
 
@@ -37,6 +38,7 @@ class TCP(object):
     """
     A TCP connection.
     """
+
     def __init__(self, host, port, timeout=300):
         """
         :param host: server's hostname
@@ -117,6 +119,7 @@ class SSL(TCP):
     """
     SSL wrapper for a :class:`fatbotslim.irc.tcp.TCP` connection.
     """
+
     def _create_socket(self):
         """
         Creates a new SSL enabled socket and sets its timeout.

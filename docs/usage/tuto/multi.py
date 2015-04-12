@@ -1,6 +1,7 @@
 from fatbotslim.irc.bot import IRC, run_bots
 from fatbotslim.handlers import CommandHandler, EVT_PUBLIC
 
+
 class HelloCommand(CommandHandler):
     triggers = {
         u'hello': [EVT_PUBLIC],
@@ -8,6 +9,7 @@ class HelloCommand(CommandHandler):
 
     def hello(self, msg):
         self.irc.msg(msg.dst, u"Hello {0}!".format(msg.src.name))
+
 
 servers = [
     {

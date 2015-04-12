@@ -44,5 +44,4 @@ results_*
 test.py
 *.ipynb
 *.db
-test.py
 docs/_build

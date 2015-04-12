@@ -35,6 +35,7 @@ from fatbotslim.irc.tcp import TCP, SSL
 from fatbotslim.handlers import CTCPHandler, PingHandler, UnknownCodeHandler, RightsHandler
 from fatbotslim.log import create_logger
 
+
 ctcp_re = re.compile(ur'\x01(.*?)\x01')
 log = create_logger(__name__)
 
@@ -246,6 +247,7 @@ class IRC(object):
         :param msg: received message
         :type msg: :class:`fatbotslim.irc.Message`
         """
+
         def handler_yielder():
             for handler in self.handlers:
                 yield handler

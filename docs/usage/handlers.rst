@@ -111,3 +111,4 @@ to add 'private' to the "hello" event list and set the answer destination accord
         def hello(self, msg):
             dst = msg.src.name if (msg.dst == irc.nick) else msg.dst
             self.irc.msg(dst, u"Hello {0}!".format(msg.src.name))
+

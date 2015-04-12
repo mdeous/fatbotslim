@@ -23,6 +23,8 @@
 This module contains the low-level networking stuff.
 """
 
+from fatbotslim.irc import sslwrap_patch
+
 from gevent import spawn, joinall, killall
 from gevent.queue import Queue
 from gevent.socket import socket

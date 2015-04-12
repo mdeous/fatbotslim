@@ -1,4 +1,10 @@
-|Flattr this repo|
+.. image:: https://requires.io/github/mattoufoutu/fatbotslim/requirements.svg?branch=master
+    :target: https://requires.io/github/mattoufoutu/fatbotslim/requirements/?branch=master
+    :alt: 'Requirements Status'
+
+.. image:: http://api.flattr.com/button/flattr-badge-large.png
+    :target: https://flattr.com/submit/auto?user_id=mattoufoutu&url=https://github.com/mattoufoutu/fatbotslim&title=fatbotslim&language=&tags=github&category=software
+    :alt: 'Flatter this repo!'
 
 FatBotSlim
 ----------
@@ -80,6 +86,3 @@ complex bots, please refer to the
     main(bot)
 
 *Just try it!*
-
-.. |Flattr this repo| image:: http://api.flattr.com/button/flattr-badge-large.png
-   :target: https://flattr.com/submit/auto?user_id=mattoufoutu&url=https://github.com/mattoufoutu/fatbotslim&title=fatbotslim&language=&tags=github&category=software
